@@ -109,8 +109,8 @@
 <script type="importmap">
 {
   "imports": {
-    "three": "./libs/three.module.js",
-    "three/addons/": "./addons/"
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
   }
 }
 </script>
@@ -279,7 +279,7 @@ const thatBox = {
   active: false, x: 0, y: 0, vx: 0, vy: 0, yaw: 0
 };
 const fatAppie = {
-  active: false, x: 0, y: 0, vx: 0, vy: 0, size: 2.56, lunchPower: 200
+  active: false, x: 0, y: 0, vx: 0, vy: 0, rot: 0, angVel: 0, size: 2.56, lunchPower: 200
 };
 
 const MovementType = { Default: 0, Inertia: 1, Smooth: 2, Rotate: 3, Reversal: 4, AppieSlide: 5, Seizure: 6, Statue: 7, Tracking: 8, NicePC: 9, FatAppie: 10 };
@@ -310,7 +310,7 @@ function resetAll() {
   body.x = body.y = 0; body.vx = body.vy = 0; body.rot = 0; body.inertia = false;
   resetParts();
   thatBox.active = false; thatBox.vx = thatBox.vy = 0; thatBox.yaw = 0;
-  fatAppie.active = false; fatAppie.vx = fatAppie.vy = 0;
+  fatAppie.active = false; fatAppie.vx = fatAppie.vy = 0; fatAppie.rot = 0; fatAppie.angVel = 0;
   if (seizureTimer) { clearInterval(seizureTimer); seizureTimer = null; }
 }
 for (const p of parts) { p.ox = p.x; p.oy = p.y; p.orot = p.rot; }
@@ -331,7 +331,7 @@ function setMovementState(code) {
   } else if (code === MovementType.AppieSlide) {
     thatBox.active = true; thatBox.x = 0; thatBox.y = 0; thatBox.vx = 0; thatBox.vy = 0;
   } else if (code === MovementType.FatAppie) {
-    fatAppie.active = true; fatAppie.x = 0; fatAppie.y = 0; fatAppie.vx = 0; fatAppie.vy = 0;
+    fatAppie.active = true; fatAppie.x = 0; fatAppie.y = 0; fatAppie.vx = 0; fatAppie.vy = 0; fatAppie.rot = 0; fatAppie.angVel = 0;
     addToast(isMobile ? '뚱뚱남 : 터치해서 날려보내기' : '뚱뚱남 : 클릭해서 날려보내기', '#ffff00');
   }
 }
@@ -380,6 +380,7 @@ function launchFatAppie(sx, sy) {
   const d = Math.hypot(dx, dy) || 1;
   fatAppie.vx = dx / d * fatAppie.lunchPower;
   fatAppie.vy = dy / d * fatAppie.lunchPower;
+  fatAppie.angVel = (Math.random() < 0.5 ? -1 : 1) * 540;   // 발사 시 회전 시작
 }
 
 /* 모바일 두손가락 홀드 메뉴 토글 (0.6887s) */
@@ -432,12 +433,13 @@ function fixedUpdate() {
   if (fatAppie.active) {
     fatAppie.vy -= 9.81 * FIXED_DT;
     fatAppie.x += fatAppie.vx * FIXED_DT; fatAppie.y += fatAppie.vy * FIXED_DT;
+    fatAppie.rot += fatAppie.angVel * FIXED_DT;
     const r = fatAppie.size / 2;
-    // 벽 = 브라우저(화면) 경계: 카메라 ortho size 5 → y ±5, x ±5*1920/1080 ≈ ±8.89
-    if (fatAppie.y - r < -5)    { fatAppie.y = -5 + r;    fatAppie.vy = Math.abs(fatAppie.vy) * 0.5; }
-    if (fatAppie.y + r > 5)     { fatAppie.y = 5 - r;     fatAppie.vy = -Math.abs(fatAppie.vy) * 0.5; }
-    if (fatAppie.x - r < -8.89) { fatAppie.x = -8.89 + r; fatAppie.vx = Math.abs(fatAppie.vx) * 0.5; }
-    if (fatAppie.x + r > 8.89)  { fatAppie.x = 8.89 - r;  fatAppie.vx = -Math.abs(fatAppie.vx) * 0.5; }
+    // 벽 = 브라우저(화면) 경계: 카메라 ortho size 5 → y ±5, x ±5*1920/1080 ≈ ±8.89 (튕기면 회전도 반전)
+    if (fatAppie.y - r < -5)    { fatAppie.y = -5 + r;    fatAppie.vy = Math.abs(fatAppie.vy) * 0.5; fatAppie.angVel = -fatAppie.angVel; }
+    if (fatAppie.y + r > 5)     { fatAppie.y = 5 - r;     fatAppie.vy = -Math.abs(fatAppie.vy) * 0.5; fatAppie.angVel = -fatAppie.angVel; }
+    if (fatAppie.x - r < -8.89) { fatAppie.x = -8.89 + r; fatAppie.vx = Math.abs(fatAppie.vx) * 0.5; fatAppie.angVel = -fatAppie.angVel; }
+    if (fatAppie.x + r > 8.89)  { fatAppie.x = 8.89 - r;  fatAppie.vx = -Math.abs(fatAppie.vx) * 0.5; fatAppie.angVel = -fatAppie.angVel; }
   }
 }
 
@@ -482,7 +484,7 @@ function update(dt) {
       break;
     case MovementType.FatAppie:
       if (Math.hypot(fatAppie.x, fatAppie.y) >= 20) {
-        fatAppie.x = 0; fatAppie.y = 0; fatAppie.vx = 0; fatAppie.vy = 0;
+        fatAppie.x = 0; fatAppie.y = 0; fatAppie.vx = 0; fatAppie.vy = 0; fatAppie.rot = 0; fatAppie.angVel = 0;
         addToast('너무 빨라서 경계를 넘어섰습니다!');
       }
       break;
@@ -580,7 +582,7 @@ function render() {
 
   if (thatBox.active) drawThatBox3D();
 
-  if (fatAppie.active) drawSprite(sprites.fat, fatAppie.x, fatAppie.y, fatAppie.size, 0, 0.5, 0.5);
+  if (fatAppie.active) drawSprite(sprites.fat, fatAppie.x, fatAppie.y, fatAppie.size, fatAppie.rot, 0.5, 0.5);
 
   if (body.visible) {
     // 팔/다리 (루트 오브젝트, sorting order 10)
