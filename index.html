@@ -434,12 +434,18 @@ function fixedUpdate() {
     fatAppie.vy -= 9.81 * FIXED_DT;
     fatAppie.x += fatAppie.vx * FIXED_DT; fatAppie.y += fatAppie.vy * FIXED_DT;
     fatAppie.rot += fatAppie.angVel * FIXED_DT;
+    fatAppie.angVel *= 1 - 0.05 * FIXED_DT;   // angular drag 0.05 (원본 Rigidbody2D 기본)
     const r = fatAppie.size / 2;
-    // 벽 = 브라우저(화면) 경계: 카메라 ortho size 5 → y ±5, x ±5*1920/1080 ≈ ±8.89 (튕기면 회전도 반전)
-    if (fatAppie.y - r < -5)    { fatAppie.y = -5 + r;    fatAppie.vy = Math.abs(fatAppie.vy) * 0.5; fatAppie.angVel = -fatAppie.angVel; }
-    if (fatAppie.y + r > 5)     { fatAppie.y = 5 - r;     fatAppie.vy = -Math.abs(fatAppie.vy) * 0.5; fatAppie.angVel = -fatAppie.angVel; }
-    if (fatAppie.x - r < -8.89) { fatAppie.x = -8.89 + r; fatAppie.vx = Math.abs(fatAppie.vx) * 0.5; fatAppie.angVel = -fatAppie.angVel; }
-    if (fatAppie.x + r > 8.89)  { fatAppie.x = 8.89 - r;  fatAppie.vx = -Math.abs(fatAppie.vx) * 0.5; fatAppie.angVel = -fatAppie.angVel; }
+    // 벽 = 브라우저(화면) 경계: y ±5, x ±8.89 (5*1920/1080)
+    // 속도가 임계값(1.5) 이하면 반사 대신 정지 — 미세 튕김 반복(발작) 방지
+    const bounce = (v, isY) => {
+      if (Math.abs(v) > 1.5) { return { v: Math.abs(v) * 0.5, ang: -fatAppie.angVel }; }
+      return { v: 0, ang: 0 };
+    };
+    if (fatAppie.y - r < -5)    { const b = bounce(fatAppie.vy, true);  fatAppie.y = -5 + r;    fatAppie.vy = b.v; fatAppie.angVel = b.ang; }
+    if (fatAppie.y + r > 5)     { const b = bounce(-fatAppie.vy, true); fatAppie.y = 5 - r;     fatAppie.vy = -b.v; fatAppie.angVel = b.ang; }
+    if (fatAppie.x - r < -8.89) { const b = bounce(fatAppie.vx, false); fatAppie.x = -8.89 + r; fatAppie.vx = b.v; fatAppie.angVel = b.ang; }
+    if (fatAppie.x + r > 8.89)  { const b = bounce(-fatAppie.vx, false); fatAppie.x = 8.89 - r;  fatAppie.vx = -b.v; fatAppie.angVel = b.ang; }
   }
 }
 
