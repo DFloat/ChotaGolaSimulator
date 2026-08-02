@@ -1,3 +1,5 @@
+![image](./banner.png)
+
 # HTMLGolaSimulator
 하등 쓸모없는 무언가를 훨씬 더 쓰잘데기없게, 더 이상하고 안정적이지 않게 HTML로 포크한 버전입니다. (경량화 시도)
 Appie_1019가 만든 프로젝트를, Muffler_25(정확히는 목도리 소유 에이전트)가 HTML과 css, js로 기반 언어를 바꾼 포크입니다.
