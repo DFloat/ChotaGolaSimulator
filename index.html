@@ -296,8 +296,8 @@ const fatAppie = {
 const { Engine, Bodies, Body, Composite } = Matter;
 const FAT_DT = 1 / 60;   // 60fps 단일 스텝 (Matter velocity는 스텝당 유닛)
 const engine = Engine.create();
-// 60fps 단일 스텝 기준: 스텝당 중력 증가 = gravity.y * scale * dt² = 5/60 (사용자: 9.81 너무 강함)
-engine.gravity.y = 5 / 60 / (engine.gravity.scale * (1000/60) * (1000/60));   // = 0.3
+// 60fps 단일 스텝 기준: 스텝당 중력 증가 = gravity.y * scale * dt² = 2.5/60 (사용자: 너무 강함 → 2.5)
+engine.gravity.y = 2.5 / 60 / (engine.gravity.scale * (1000/60) * (1000/60));   // = 0.15
 const wallOpts = { isStatic: true, friction: 0, restitution: 0.5 };
 // 벽: 표면이 화면 경계(y ±5, x ±8.89)가 되도록 두껍게 배치 — 60fps 스텝(3.3유닛 이동)도 통과 못 함
 const walls = [
@@ -901,7 +901,8 @@ function loadSkinFromBlob(blob) {
     bg.imageSmoothingEnabled = false;
     bg.drawImage(norm, 0, 0, big.width, big.height);
     const U = skinUP;
-    const cut = (x, y, w, h) => cutSprite(big, x * U, (64 - y - h) * U, w * U, h * U);
+    // 주의: 마크 스킨 좌표는 이미지 좌표(위에서 y). Appie와 달리 (64-y-h) 변환을 하면 위아래가 뒤집힘
+    const cut = (x, y, w, h) => cutSprite(big, x * U, y * U, w * U, h * U);
     // Layer 1 (기본): Head(8,8) Body(20,16) ArmR(44,16) ArmL(36,16) LegR(4,16) LegL(16,16)
     // Layer 2 (겉옷): Head(40,8) Body(20,40) ArmR(44,40) ArmL(52,40) LegR(4,40) LegL(12,40)
     skinParts = {
