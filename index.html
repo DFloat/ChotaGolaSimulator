@@ -114,6 +114,7 @@
   }
 }
 </script>
+<script src="./libs/matter.min.js"></script>
 <script type="module">
 import * as THREE from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
@@ -279,8 +280,40 @@ const thatBox = {
   active: false, x: 0, y: 0, vx: 0, vy: 0, yaw: 0
 };
 const fatAppie = {
-  active: false, x: 0, y: 0, vx: 0, vy: 0, rot: 0, angVel: 0, size: 2.56, lunchPower: 200
+  active: false, x: 0, y: 0, rot: 0, size: 2.56, lunchPower: 200
 };
+
+/* ---------- Matter.js 물리 (뚱뚱남 전용) ---------- */
+const { Engine, Bodies, Body, Composite } = Matter;
+const FAT_DT = 1 / 60;   // 60fps 단일 스텝 (Matter velocity는 스텝당 유닛)
+const engine = Engine.create();
+// 60fps 단일 스텝 기준: 스텝당 중력 증가 = gravity.y * scale * dt² = 9.81/60
+engine.gravity.y = 9.81 / 60 / (engine.gravity.scale * (1000/60) * (1000/60));   // = 0.5886
+const wallOpts = { isStatic: true, friction: 0, restitution: 0.5 };
+// 벽: 표면이 화면 경계(y ±5, x ±8.89)가 되도록 두껍게 배치 — 60fps 스텝(3.3유닛 이동)도 통과 못 함
+const walls = [
+  Bodies.rectangle(0, 10, 60, 10, wallOpts),     // 바닥 (표면 Matter y=5 = 월드 -5)
+  Bodies.rectangle(0, -10, 60, 10, wallOpts),    // 천장 (표면 Matter y=-5 = 월드 5)
+  Bodies.rectangle(-13.89, 0, 10, 60, wallOpts), // 왼쪽 (표면 Matter x=-8.89)
+  Bodies.rectangle(13.89, 0, 10, 60, wallOpts),  // 오른쪽 (표면 Matter x=8.89)
+];
+Composite.add(engine.world, walls);
+let fatBody = null;
+function createFatBody() {
+  if (fatBody) Composite.remove(engine.world, fatBody);
+  fatBody = Bodies.rectangle(0, 0, fatAppie.size, fatAppie.size, {
+    friction: 0, frictionAir: 0, restitution: 0.5, density: 1 / (fatAppie.size * fatAppie.size)   // mass 1
+  });
+  Composite.add(engine.world, fatBody);
+}
+function resetFatBody() {
+  if (!fatBody) return;
+  Body.setPosition(fatBody, { x: 0, y: 0 });
+  Body.setVelocity(fatBody, { x: 0, y: 0 });
+  Body.setAngularVelocity(fatBody, 0);
+  Body.setAngle(fatBody, 0);
+  fatAppie.x = 0; fatAppie.y = 0; fatAppie.rot = 0;
+}
 
 const MovementType = { Default: 0, Inertia: 1, Smooth: 2, Rotate: 3, Reversal: 4, AppieSlide: 5, Seizure: 6, Statue: 7, Tracking: 8, NicePC: 9, FatAppie: 10 };
 const MODE_NAMES = ['기본', '관성', '부드럽게', '회전', '반전', '애피 슬라이드', '발작', '동상', '추적', '나이스한 컴퓨터', '뚱뚱남'];
@@ -310,7 +343,7 @@ function resetAll() {
   body.x = body.y = 0; body.vx = body.vy = 0; body.rot = 0; body.inertia = false;
   resetParts();
   thatBox.active = false; thatBox.vx = thatBox.vy = 0; thatBox.yaw = 0;
-  fatAppie.active = false; fatAppie.vx = fatAppie.vy = 0; fatAppie.rot = 0; fatAppie.angVel = 0;
+  fatAppie.active = false; resetFatBody();
   if (seizureTimer) { clearInterval(seizureTimer); seizureTimer = null; }
 }
 for (const p of parts) { p.ox = p.x; p.oy = p.y; p.orot = p.rot; }
@@ -331,7 +364,7 @@ function setMovementState(code) {
   } else if (code === MovementType.AppieSlide) {
     thatBox.active = true; thatBox.x = 0; thatBox.y = 0; thatBox.vx = 0; thatBox.vy = 0;
   } else if (code === MovementType.FatAppie) {
-    fatAppie.active = true; fatAppie.x = 0; fatAppie.y = 0; fatAppie.vx = 0; fatAppie.vy = 0; fatAppie.rot = 0; fatAppie.angVel = 0;
+    fatAppie.active = true; createFatBody(); resetFatBody();
     addToast(isMobile ? '뚱뚱남 : 터치해서 날려보내기' : '뚱뚱남 : 클릭해서 날려보내기', '#ffff00');
   }
 }
@@ -378,9 +411,9 @@ function launchFatAppie(sx, sy) {
   const w = screenToWorld(sx, sy);
   const dx = w[0] - fatAppie.x, dy = w[1] - fatAppie.y;
   const d = Math.hypot(dx, dy) || 1;
-  fatAppie.vx = dx / d * fatAppie.lunchPower;
-  fatAppie.vy = dy / d * fatAppie.lunchPower;
-  fatAppie.angVel = (Math.random() < 0.5 ? -1 : 1) * 540;   // 발사 시 회전 시작
+  // Matter는 y-down → 월드 속도 y 반전해서 설정
+  Body.setVelocity(fatBody, { x: dx / d * fatAppie.lunchPower / 60, y: -dy / d * fatAppie.lunchPower / 60 });
+  Body.setAngularVelocity(fatBody, (Math.random() < 0.5 ? -1 : 1) * 540 * RAD / 60);   // 발사 시 회전
 }
 
 /* 모바일 두손가락 홀드 메뉴 토글 (0.6887s) */
@@ -431,21 +464,11 @@ function fixedUpdate() {
   }
   // FatAppie 중력 (gravityScale 1) + Walls 4면 충돌 (원본: 바닥(0,-7,20x5), 천장(0,7,20x5), 좌(-11,0,5x18), 우(11,0,5x18))
   if (fatAppie.active) {
-    fatAppie.vy -= 9.81 * FIXED_DT;
-    fatAppie.x += fatAppie.vx * FIXED_DT; fatAppie.y += fatAppie.vy * FIXED_DT;
-    fatAppie.rot += fatAppie.angVel * FIXED_DT;
-    fatAppie.angVel *= 1 - 0.05 * FIXED_DT;   // angular drag 0.05 (원본 Rigidbody2D 기본)
-    const r = fatAppie.size / 2;
-    // 벽 = 브라우저(화면) 경계: y ±5, x ±8.89 (5*1920/1080)
-    // 속도가 임계값(1.5) 이하면 반사 대신 정지 — 미세 튕김 반복(발작) 방지
-    const bounce = (v, isY) => {
-      if (Math.abs(v) > 1.5) { return { v: Math.abs(v) * 0.5, ang: -fatAppie.angVel }; }
-      return { v: 0, ang: 0 };
-    };
-    if (fatAppie.y - r < -5)    { const b = bounce(fatAppie.vy, true);  fatAppie.y = -5 + r;    fatAppie.vy = b.v; fatAppie.angVel = b.ang; }
-    if (fatAppie.y + r > 5)     { const b = bounce(-fatAppie.vy, true); fatAppie.y = 5 - r;     fatAppie.vy = -b.v; fatAppie.angVel = b.ang; }
-    if (fatAppie.x - r < -8.89) { const b = bounce(fatAppie.vx, false); fatAppie.x = -8.89 + r; fatAppie.vx = b.v; fatAppie.angVel = b.ang; }
-    if (fatAppie.x + r > 8.89)  { const b = bounce(-fatAppie.vx, false); fatAppie.x = 8.89 - r;  fatAppie.vx = -b.v; fatAppie.angVel = b.ang; }
+    Engine.update(engine, 1000 / 60);
+    // Matter(y-down) → 월드(y-up) 동기화
+    fatAppie.x = fatBody.position.x;
+    fatAppie.y = -fatBody.position.y;
+    fatAppie.rot = -fatBody.angle / RAD;
   }
 }
 
@@ -490,7 +513,7 @@ function update(dt) {
       break;
     case MovementType.FatAppie:
       if (Math.hypot(fatAppie.x, fatAppie.y) >= 20) {
-        fatAppie.x = 0; fatAppie.y = 0; fatAppie.vx = 0; fatAppie.vy = 0; fatAppie.rot = 0; fatAppie.angVel = 0;
+        resetFatBody();
         addToast('너무 빨라서 경계를 넘어섰습니다!');
       }
       break;
