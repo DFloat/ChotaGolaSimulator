@@ -186,6 +186,15 @@ texImg.src = 'data:image/png;base64,' + TEX_B64;
             <span class="row-label" id="uselessText">인생에 전혀 필요 없는 스위치</span>
             <div class="toggle enabled" id="uselessToggle"><div class="dot"></div></div>
           </div>
+          <div class="row">
+            <span class="row-label">Skin Import</span>
+            <div class="toggle" id="skinToggle"><div class="dot"></div></div>
+          </div>
+          <div class="row" id="skinInputRow" style="display:none">
+            <button id="skinFileBtn" style="padding:8px 14px;font-size:16px;cursor:pointer">스킨 파일 선택</button>
+            <span class="row-label" style="flex:0;font-size:16px">또는 Ctrl+V 붙여넣기</span>
+          </div>
+          <input type="file" id="skinFile" accept="image/*" style="display:none">
         </div>
       </div>
       <div class="sec-divider"></div>
@@ -287,8 +296,8 @@ const fatAppie = {
 const { Engine, Bodies, Body, Composite } = Matter;
 const FAT_DT = 1 / 60;   // 60fps 단일 스텝 (Matter velocity는 스텝당 유닛)
 const engine = Engine.create();
-// 60fps 단일 스텝 기준: 스텝당 중력 증가 = gravity.y * scale * dt² = 9.81/60
-engine.gravity.y = 9.81 / 60 / (engine.gravity.scale * (1000/60) * (1000/60));   // = 0.5886
+// 60fps 단일 스텝 기준: 스텝당 중력 증가 = gravity.y * scale * dt² = 5/60 (사용자: 9.81 너무 강함)
+engine.gravity.y = 5 / 60 / (engine.gravity.scale * (1000/60) * (1000/60));   // = 0.3
 const wallOpts = { isStatic: true, friction: 0, restitution: 0.5 };
 // 벽: 표면이 화면 경계(y ±5, x ±8.89)가 되도록 두껍게 배치 — 60fps 스텝(3.3유닛 이동)도 통과 못 함
 const walls = [
@@ -614,10 +623,18 @@ function render() {
   if (fatAppie.active) drawSprite(sprites.fat, fatAppie.x, fatAppie.y, fatAppie.size, fatAppie.rot, 0.5, 0.5);
 
   if (body.visible) {
-    // 팔/다리 (루트 오브젝트, sorting order 10)
-    for (const p of parts) {
+    // Layer 2(겉옷)는 Layer 1 위에 같은 변환으로 겹쳐 그림
+    const drawPart = (l1, l2, wx, wy, wUnits, angleDeg, px, py) => {
+      drawSprite(l1, wx, wy, wUnits, angleDeg, px, py);
+      if (l2) drawSprite(l2, wx, wy, wUnits, angleDeg, px, py);
+    };
+    // 팔/다리 (루트 오브젝트, sorting order 10) — parts 순서: Arm_L, Arm_R, Leg_L, Leg_R
+    const skinSeq = skinParts ? [skinParts.armL, skinParts.armR, skinParts.legL, skinParts.legR] : null;
+    for (let i = 0; i < parts.length; i++) {
+      const p = parts[i];
       if (!p.visible) continue;
-      drawSprite(sprites[p.spr], p.x, p.y, p.w, p.rot, p.px, p.py);
+      if (skinSeq) drawPart(skinSeq[i].l1, skinSeq[i].l2, p.x, p.y, p.w, p.rot, p.px, p.py);
+      else drawSprite(sprites[p.spr], p.x, p.y, p.w, p.rot, p.px, p.py);
     }
     // 몸통+머리 (GolaBody 자식: 공전 + 함께 회전, order 15)
     const cA = Math.cos(body.rot * RAD), sA = Math.sin(body.rot * RAD);
@@ -625,8 +642,13 @@ function render() {
     const by = body.y + bodyLocal.x * sA + bodyLocal.y * cA;
     const hx = body.x + headLocal.x * cA - headLocal.y * sA;
     const hy = body.y + headLocal.x * sA + headLocal.y * cA;
-    drawSprite(sprites.body, bx, by, bodyLocal.w, body.rot, bodyLocal.px, bodyLocal.py);
-    drawSprite(sprites.head, hx, hy, headLocal.w, body.rot, headLocal.px, headLocal.py);
+    if (skinParts) {
+      drawPart(skinParts.body.l1, skinParts.body.l2, bx, by, bodyLocal.w, body.rot, bodyLocal.px, bodyLocal.py);
+      drawPart(skinParts.head.l1, skinParts.head.l2, hx, hy, headLocal.w, body.rot, headLocal.px, headLocal.py);
+    } else {
+      drawSprite(sprites.body, bx, by, bodyLocal.w, body.rot, bodyLocal.px, bodyLocal.py);
+      drawSprite(sprites.head, hx, hy, headLocal.w, body.rot, headLocal.px, headLocal.py);
+    }
   }
 }
 
@@ -832,6 +854,78 @@ function startRainbow() {
   if (!rainbowOn) return;
   requestAnimationFrame(rainbowLoop);
 }
+
+/* ================= 마크 스킨 임포트 (Layer 1 + Layer 2) ================= */
+let skinEnabled = false;
+let skinParts = null;   // { armL:{l1,l2}, armR:{l1,l2}, legL:{l1,l2}, legR:{l1,l2}, head:{l1,l2}, body:{l1,l2} }
+const skinUP = 8;       // 화질: 64x64 → 512x512 nearest 업스케일
+
+initToggle('skinToggle', on => {
+  skinEnabled = on;
+  document.getElementById('skinInputRow').style.display = on ? 'flex' : 'none';
+});
+
+// 스킨 정규화: 64x32(구버전) → 64x64 (왼팔/왼다리 미러), 그 외 → 64x64 nearest
+function normalizeSkin(img) {
+  const c = document.createElement('canvas');
+  c.width = 64; c.height = 64;
+  const g = c.getContext('2d');
+  if (img.width === 64 && img.height === 32) {
+    g.drawImage(img, 0, 0);
+    const mirror = (sx, sy, dx, dy) => {
+      g.save();
+      g.translate(dx + 4, dy + 12);
+      g.scale(-1, 1);
+      g.drawImage(c, sx, sy, 4, 12, 0, 0, 4, 12);
+      g.restore();
+    };
+    mirror(44, 16, 36, 16);   // 오른팔 → 왼팔
+    mirror(4, 16, 16, 16);    // 오른다리 → 왼다리
+  } else {
+    g.imageSmoothingEnabled = false;
+    g.drawImage(img, 0, 0, 64, 64);
+  }
+  return c;
+}
+
+function loadSkinFromBlob(blob) {
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    URL.revokeObjectURL(url);
+    const norm = normalizeSkin(img);
+    // 8배 업스케일 (픽셀아트 화질 유지)
+    const big = document.createElement('canvas');
+    big.width = big.height = 64 * skinUP;
+    const bg = big.getContext('2d');
+    bg.imageSmoothingEnabled = false;
+    bg.drawImage(norm, 0, 0, big.width, big.height);
+    const U = skinUP;
+    const cut = (x, y, w, h) => cutSprite(big, x * U, (64 - y - h) * U, w * U, h * U);
+    // Layer 1 (기본): Head(8,8) Body(20,16) ArmR(44,16) ArmL(36,16) LegR(4,16) LegL(16,16)
+    // Layer 2 (겉옷): Head(40,8) Body(20,40) ArmR(44,40) ArmL(52,40) LegR(4,40) LegL(12,40)
+    skinParts = {
+      head: { l1: cut(8, 8, 8, 8), l2: cut(40, 8, 8, 8) },
+      body: { l1: cut(20, 16, 8, 12), l2: cut(20, 40, 8, 12) },
+      armR: { l1: cut(44, 16, 4, 12), l2: cut(44, 40, 4, 12) },
+      armL: { l1: cut(36, 16, 4, 12), l2: cut(52, 40, 4, 12) },
+      legR: { l1: cut(4, 16, 4, 12), l2: cut(4, 40, 4, 12) },
+      legL: { l1: cut(16, 16, 4, 12), l2: cut(12, 40, 4, 12) }
+    };
+    addToast('스킨 적용됨 (Layer 1 + Layer 2)');
+  };
+  img.src = url;
+}
+
+document.getElementById('skinFileBtn').addEventListener('click', () => document.getElementById('skinFile').click());
+document.getElementById('skinFile').addEventListener('change', e => {
+  if (e.target.files[0]) loadSkinFromBlob(e.target.files[0]);
+});
+window.addEventListener('paste', e => {
+  if (!skinEnabled) return;
+  const item = [...e.clipboardData.items].find(i => i.type.startsWith('image/'));
+  if (item) loadSkinFromBlob(item.getAsFile());
+});
 /* 이스터에그: 30회부터 배경 레인보우 */
 const uselessToggleEl = document.getElementById('uselessToggle');
 uselessToggleEl.addEventListener('click', () => {
