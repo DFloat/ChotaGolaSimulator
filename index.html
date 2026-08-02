@@ -879,8 +879,8 @@ function normalizeSkin(img) {
       g.drawImage(c, sx, sy, 4, 12, 0, 0, 4, 12);
       g.restore();
     };
-    mirror(44, 16, 36, 16);   // 오른팔 → 왼팔
-    mirror(4, 16, 16, 16);    // 오른다리 → 왼다리
+    mirror(44, 16, 36, 52);   // 오른팔 front → 왼팔 front (64x64 좌표)
+    mirror(4, 16, 20, 52);    // 오른다리 front → 왼다리 front
   } else {
     g.imageSmoothingEnabled = false;
     g.drawImage(img, 0, 0, 64, 64);
@@ -903,15 +903,16 @@ function loadSkinFromBlob(blob) {
     const U = skinUP;
     // 주의: 마크 스킨 좌표는 이미지 좌표(위에서 y). Appie와 달리 (64-y-h) 변환을 하면 위아래가 뒤집힘
     const cut = (x, y, w, h) => cutSprite(big, x * U, y * U, w * U, h * U);
-    // Layer 1 (기본): Head(8,8) Body(20,16) ArmR(44,16) ArmL(36,16) LegR(4,16) LegL(16,16)
-    // Layer 2 (겉옷): Head(40,8) Body(20,40) ArmR(44,40) ArmL(52,40) LegR(4,40) LegL(12,40)
+    // 검증된 UV (skinview3d): 사지 블록은 top 4px + 면 12px 구조라 front는 y+4
+    // Layer 1 front: Head(8,8) Body(20,20) ArmR(44,20) ArmL(36,52) LegR(4,20) LegL(20,52)
+    // Layer 2 front: Head(40,8) Body(20,36) ArmR(44,36) ArmL(52,52) LegR(4,36) LegL(4,52)
     skinParts = {
       head: { l1: cut(8, 8, 8, 8), l2: cut(40, 8, 8, 8) },
-      body: { l1: cut(20, 16, 8, 12), l2: cut(20, 40, 8, 12) },
-      armR: { l1: cut(44, 16, 4, 12), l2: cut(44, 40, 4, 12) },
-      armL: { l1: cut(36, 16, 4, 12), l2: cut(52, 40, 4, 12) },
-      legR: { l1: cut(4, 16, 4, 12), l2: cut(4, 40, 4, 12) },
-      legL: { l1: cut(16, 16, 4, 12), l2: cut(12, 40, 4, 12) }
+      body: { l1: cut(20, 20, 8, 12), l2: cut(20, 36, 8, 12) },
+      armR: { l1: cut(44, 20, 4, 12), l2: cut(44, 36, 4, 12) },
+      armL: { l1: cut(36, 52, 4, 12), l2: cut(52, 52, 4, 12) },
+      legR: { l1: cut(4, 20, 4, 12), l2: cut(4, 36, 4, 12) },
+      legL: { l1: cut(20, 52, 4, 12), l2: cut(4, 52, 4, 12) }
     };
     addToast('스킨 적용됨 (Layer 1 + Layer 2)');
   };
