@@ -1,17 +1,30 @@
-![image](./banner.png)
+# ChotaGolaSimulator
 
-# HTMLGolaSimulator
-하등 쓸모없는 무언가를 훨씬 더 쓰잘데기없게, 더 이상하고 안정적이지 않게 HTML로 포크한 버전입니다. (경량화 시도)
-Appie_1019가 만든 프로젝트를, Muffler_25(정확히는 목도리 소유 에이전트)가 HTML과 css, js로 기반 언어를 바꾼 포크입니다.
-이게 경량화 되었는지도 모르겠습니다; 사실 단일파일로 생각중이였지만 더 많아져서
-이도저도 아니게 되었지만, 유니티를 잘 모르시는 분이 포크하실 수 있습니다
+[Appie-1019/GolaGolaSimulator](https://github.com/Appie-1019/GolaGolaSimulator)의 가장 작은 포크.
 
-
-## 알려진 문제점
-1. TAB를 눌러서 나오는 설정 화면이 원본과 상당히 다릅니다. 유니티 전용 라이브러리 UI를 구현하는건 너무 Ai에게는 빡셌습니다.
-2. 애피 슬라이드 모드를 쓸 시, 환경이 나쁘신 분들은 아주 그냥 애피가 사악해집니다. 렌더링이 버벅입니다.
-3. 애피 슬라이드 모드를 쓸 시, 원래 배경이 푸른 색으로 변해야 하나 귀찮아서 구현하지 않았습니다ㅅㄱ
+- **chota** = 힌두어로 "작다" + [chota.css](https://jenil.github.io/chota/) 레퍼런스
+- **단일 HTML 파일 하나** (511KB) — 폰트/이미지/사운드/3D 모델 전부 base64 내장, 인터넷 없이도 동작
+- 원본 Unity 로직(조작 방식 12종)을 JS로 이식, 원본 FBX 모델 + 텍스처 사용
 
 ## 링크
-* [HTMLGolaSimulator 플레이] https://dfloat.github.io/HTMLGolaSimulator
-* [업데이트 기록] 없음ㅅㄱ 
+* [플레이](https://dfloat.github.io/ChotaGolaSimulator/)
+* [원본](https://github.com/Appie-1019/GolaGolaSimulator)
+* [안전빵 버전 (용량 최적화 전)](https://github.com/DFloat/ChotaGolaSimulator/blob/main/golagolasimulator.html)
+
+## 기능
+- 조작 방식 12종: 기본 / 관성 / 부드럽게 / 회전 / 반전 / 애피 슬라이드 / 발작 / 동상 / 추적 / 나이스한 컴퓨터 / 뚱뚱남 / 잔상
+- 애피 슬라이드: 원본 `ThatBox_LowPoly.fbx` 파싱 데이터 + 원본 텍스처로 소프트웨어 3D 렌더
+- 설정 (TAB): 조작 방식 / 토스트 / 배경색(RGB+HEX) / 볼륨 3채널
+- 토스트 메시지 (원본 스택 메커니즘), 저장(localStorage), 인트로 경고 문구, 크레딧
+- 원본 사운드 에셋 (GolaGola Voice, Tick/Tock, Bell 등)
+
+## 조작
+- `TAB` : 설정 메뉴
+- `M` : 마우스 커서 토글
+- 뚱뚱남 모드에서 클릭: 날려보내기
+
+## 파일
+| 파일 | 설명 |
+|---|---|
+| `index.html` | 프로덕션 (로직 경량화 + 데이터 최적화, 511KB) |
+| `golagolasimulator.html` | 안전빵 (용량 최적화 전 버전) |
