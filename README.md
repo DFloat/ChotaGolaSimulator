@@ -1,30 +1,35 @@
+![image](./banner.png)
+
 # ChotaGolaSimulator
 
-[Appie-1019/GolaGolaSimulator](https://github.com/Appie-1019/GolaGolaSimulator)의 가장 작은 포크.
+하등 쓸모없는 무언가를, 하등 쓸모없는 상태 그대로 **더 작게** 만든 포크입니다.
 
-- **chota** = 힌두어로 "작다" + [chota.css](https://jenil.github.io/chota/) 레퍼런스
-- **단일 HTML 파일 하나** (511KB) — 폰트/이미지/사운드/3D 모델 전부 base64 내장, 인터넷 없이도 동작
-- 원본 Unity 로직(조작 방식 12종)을 JS로 이식, 원본 FBX 모델 + 텍스처 사용
+chota는 힌두어로 "작다"라는 뜻이고, 동시에 이 프로젝트가 사용하는 [chota.css](https://jenil.github.io/chota/)의 이름이기도 합니다. 이름부터가 이미 아무짝에도 쓸모없는 의미론적 중의성입니다.
+
+> 개발자 의견 : 원본이 76MB면, 이건 511KB입니다. 뭘 기대하셨나요? 아무짝에도 쓸모없는 건 그대로인데요.
 
 ## 링크
-* [플레이](https://dfloat.github.io/ChotaGolaSimulator/)
-* [원본](https://github.com/Appie-1019/GolaGolaSimulator)
-* [안전빵 버전 (용량 최적화 전)](https://github.com/DFloat/ChotaGolaSimulator/blob/main/golagolasimulator.html)
+* [ChotaGolaSimulator 플레이](https://dfloat.github.io/ChotaGolaSimulator/)
+* [원본 GolaGolaSimulator](https://github.com/Appie-1019/GolaGolaSimulator)
+* [업데이트 기록](./CHANGELOG.md) — 없습니다. 만들기 귀찮았습니다.
 
-## 기능
-- 조작 방식 12종: 기본 / 관성 / 부드럽게 / 회전 / 반전 / 애피 슬라이드 / 발작 / 동상 / 추적 / 나이스한 컴퓨터 / 뚱뚱남 / 잔상
-- 애피 슬라이드: 원본 `ThatBox_LowPoly.fbx` 파싱 데이터 + 원본 텍스처로 소프트웨어 3D 렌더
-- 설정 (TAB): 조작 방식 / 토스트 / 배경색(RGB+HEX) / 볼륨 3채널
-- 토스트 메시지 (원본 스택 메커니즘), 저장(localStorage), 인트로 경고 문구, 크레딧
-- 원본 사운드 에셋 (GolaGola Voice, Tick/Tock, Bell 등)
+## 이게 뭔가요?
+원본 GolaGolaSimulator는 Unity로 만든 "하등 쓸모없는 무언가"였습니다. 이 포크는 그걸 **단일 HTML 파일 하나**로 옮긴 "하등 쓸모없는 무언가"입니다.
+
+* 조작 방식 12종: 기본, 관성, 부드럽게, 회전, 반전, 애피 슬라이드, 발작, 동상, 추적, 나이스한 컴퓨터, 뚱뚱남, 잔상
+* 애피 슬라이드는 원본 FBX 모델 데이터를 그대로 사용합니다. 심지어 텍스처까지요.
+* 소리도 원본 그대로입니다. GolaGola Voice, Tick, Tock, 그리고 그 유명한 뚱뚱남의 벨소리까지.
+* 폰트, 이미지, 소리, 3D 모델 전부 base64로 때려넣었습니다. 와이파이를 꺼도 됩니다. 꺼보세요.
 
 ## 조작
-- `TAB` : 설정 메뉴
-- `M` : 마우스 커서 토글
-- 뚱뚱남 모드에서 클릭: 날려보내기
+* `TAB` : 설정 메뉴. 단, 건너뛸 수 없는 경고 문구가 끝나고 나면 열립니다.
+* `M` : 마우스 커서 토글
+* 뚱뚱남 모드에서 클릭: 날려보내기. 경계를 넘으면 "너무 빨라서 경계를 넘어섰습니다!" 토스트와 함께 중앙으로 리셋됩니다. 놀랍게도 도움이 전혀 안 됩니다.
 
 ## 파일
 | 파일 | 설명 |
 |---|---|
-| `index.html` | 프로덕션 (로직 경량화 + 데이터 최적화, 511KB) |
-| `golagolasimulator.html` | 안전빵 (용량 최적화 전 버전) |
+| `index.html` | 본편 (511KB) |
+| `golagolasimulator.html` | 버그 생겼을 때의 안전빵 |
+
+> 개발자 의견 : 버그가 생기면 안전빵으로 돌아가시면 됩니다. 어차피 뭐가 달라도 아무짝에도 쓸모없는 건 똑같습니다.
