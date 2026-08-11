@@ -13,7 +13,7 @@ chota는 힌두어로 "작다"라는 뜻이고, 동시에 이 프로젝트가 �
 ## 링크
 * [ChotaGolaSimulator 플레이](https://dfloat.github.io/ChotaGolaSimulator/)
 * [원본 GolaGolaSimulator](https://github.com/Appie-1019/GolaGolaSimulator) 
-* ~~[업데이트 기록](./CHANGELOG.md)~~ — 없습니다. 만들기 귀찮았습니다.
+* [업데이트 기록](./CHANGELOG.md) — ~~없습니다. 만들기 귀찮았습니다.~~ 생기긴 했습니다만, 과연 제대로 될진 모르겠습니다.
 
 ## 이게 그래서 뭔데???
 원본 GolaGolaSimulator는 Unity로 만든 "하등 쓸모없는 무언가"였습니다. 이 포크는 그걸 **단일 HTML 파일 하나**로 옮긴 "하등 쓸모없는 무언가"입니다.
