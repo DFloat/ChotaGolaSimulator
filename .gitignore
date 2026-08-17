@@ -3,9 +3,10 @@
 !*/
 
 !/.gitignore
-!/OriginalGola/**
 !/CHANGELOG.md
 !/README.md
 !/banner.png
 !/index.html
-!/golagolasimulator.html
+!/original-like.html
+!/bin/**
+!/LICENSE

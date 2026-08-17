@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>ChotaGolaSimulator</title>
-<!-- [트랙 1: 포크 본진] — DFloat 독자 업데이트 전용. 원본 싱크로율 버전은 original-like.html -->
+<title>GolaGolaSimulator (Original-Like)</title>
+<!--
+  [Original-Like 트랙 — 원본 싱크로율 추종 버전]
+  - 원본(GolaGolaSimulator by Appie-1019)이 업데이트되면 그 내용만 그대로 따라가는 버전입니다.
+  - 포크 전용 기능(DFloat 독자 업데이트)은 index.html(트랙 1)에만 넣습니다. 여기엔 넣지 않습니다.
+  - 원본: https://github.com/Appie-1019/GolaGolaSimulator
+-->
 <style>
 /* chota.css v0.9.2 (MIT) — 내장 */
 /*!
@@ -76,17 +81,6 @@ html, body { height: 100%; overflow: hidden; background: #fff; -webkit-font-smoo
 .slider-track .handle { position: absolute; width: 20px; height: 30px; background: #c8c8c8; top: 50%; transform: translate(-50%, -50%); }
 .slider-val { width: 90px; height: 44px; background: #fff; color: #000; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
 input.slider-val { display: block; text-align: center; border: none !important; border-radius: 0 !important; padding: 0 !important; width: 90px !important; font-family: var(--font-family); font-weight: 700; outline: none; }
-/* 당구 파워바 (차지 게이지 — 큐(팔) 옆에 붙음, 발사 후 0으로 천천히 복귀) */
-#poolPower { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 240px; display: none; z-index: 60; pointer-events: none; }  /* pointer-events:none — 게임 조작(차지)을 막지 않음 */
-body.pool-on:not(.pool-panel) #poolPower { display: block; }
-#poolPower .pool-power-box { background: #787878; border: 4px solid #4f4f4f; padding: 8px 10px; }  /* 세팅 패널 회색(#787878) + 진회색(#4f4f4f) — 글씨까지 감쌈 */
-#poolPower .pool-power-desc { text-align: center; font-style: italic; color: #fff; font-family: var(--font-family); font-weight: 700; font-size: 12px; margin-bottom: 6px; }
-#poolPower .slider-track { width: 100%; }
-#poolPower .pool-power-label { text-align: center; font-size: 16px; color: #fff; font-family: var(--font-family); font-weight: 700; margin-top: 5px; }
-/* 플랩골라 보너스 — 설정 .btn(버전 정보) + .gg-switch 에셋 그대로, 파이프 따라다님 */
-#flappyBonus { position: fixed; display: none; z-index: 59; text-align: center; pointer-events: auto; transform: translate(-50%, -50%); }
-#flappyBonus .btn { background: #fff; color: #000; border: 5px solid #000; border-radius: 0; width: 76px; height: 38px; padding: 0; font-size: 18px; cursor: pointer; display: block; margin: 0 auto 6px; font-family: var(--font-family); font-weight: 700; }
-#flappyBonus .gg-switch { margin: 0 auto; }
 .vol-val { width: 70px; text-align: right; font-size: 24px; color: #fff; flex-shrink: 0; }
 .color-preview { width: 100%; max-width: 720px; height: 44px; background: #fff; border: 4px solid #000; margin: 0 auto 8px; }
   .hex-row { display: flex; align-items: center; justify-content: flex-end; gap: 10px; max-width: 720px; margin: 14px auto 4px; }
@@ -245,47 +239,30 @@ body.pool-on:not(.pool-panel) #poolPower { display: block; }
 <div id="modal" onclick="if(event.target===this)closeModal()">
   <div id="modal-head">
     <button class="modal-btn close" onclick="closeModal()">×</button>
-    <div class="v-title">ChotaGolaSimulator</div>
-    <div class="v-ver" id="vVer">V1.5 (Chota Edition 포크)</div>
-    <div class="v-dev" id="vDev">개발자 코멘트 : Yo tween! ready for earrape</div>
+    <div class="v-title">GolaGolaSimulator</div>
+    <div class="v-ver" id="vVer">V1.5.1</div>
+    <div class="v-dev" id="vDev">개발자 코멘트 : 마우스를 팔이 빠질 때까지 돌려보세요.</div>
     <button class="modal-btn prev" onclick="prevVersion()">◀</button>
     <button class="modal-btn next" onclick="nextVersion()">▶</button>
   </div>
   <div id="modal-log" class="v-log">
     <span class="changelog-tag">[추가됨]</span><br>
-    - 이제 버튼, 슬라이더, 스위치 UI에 재생되는 소리가 있습니다.<br>
-    - 볼륨 설정이 메뉴에 추가됩니다.<br>
-    &nbsp;&nbsp;- 모바일에서도 이용할 수 있습니다.<br>
-    - 이제 토스트 메시지 허용 여부와 볼륨 설정은 자동으로 저장됩니다.<br>
-    - 이제 토스트 메시지를 켜고 끌 때마다 토스트 메시지로 안내가 나옵니다.<br>
-    - 이제 시작할 때마다 아무짝에도 쓸모없는 경고 문구들이 나옵니다.<br>
-    &nbsp;&nbsp;- 놀랍게도 건너뛸 수 없습니다.<br>
-    - '뚱뚱남' 조작 방식이 추가되었습니다.<br>
-    - '잔상' 조작 방식이 추가되었습니다.<br>
-    - 애피 슬라이드: 원본 FBX 모델 데이터를 사용합니다.<br><br>
+    - 이제 GolaGola할 때마다 소리가 있습니다.<br>
+    &nbsp;&nbsp;- 관련 설정도 추가되었습니다.<br>
+    <span class="changelog-tag">[수정됨]</span><br>
+    - 크레딧 배속 기능을 이용하면 자주 문자 위치가 어긋나거나 겹치는 문제가 해결되었습니다.<br>
+    - 이제 크레딧 배속 안내 메시지는 양심있는 투명도를 가집니다.<br>
+    - 크레딧이 끝나면 이제 메인 화면으로 돌아갑니다.<br>
+    - 시뮬레이터 안과 CHANGELOG.md의 버전 정보가 잘못 표기된 부분이 수정되었습니다.<br>
+    - 배경 설정의 HEX 입력란이 모두 대문자로 바뀌지 않는 문제를 해결했습니다.<br>
+    - 크레딧이 요소가 추가됨에 따라 변경되었습니다.<br>
+    - 크레딧의 일부 글자에 색상을 추가했습니다.<br>
     <span class="changelog-tag">[기타]</span><br>
-    - 원본: <a href="https://github.com/Appie-1019/GolaGolaSimulator">Appie-1019/GolaGolaSimulator</a><br>
-    - 단일 HTML + chota.css 포크
+    - 개발자가 진지하게 인트로에 있는 경고 메시지를 짧게 만들지 말지 고민하고 있습니다.<br>
+    &nbsp;&nbsp;- 맨날 테스트할 때마다 10초동안 경고 화면을 보고 있자니, 인생의 질이 하락합니다.<br>
+    &nbsp;&nbsp;- 고민만 했습니다. 아직 아무것도 바꾸지 않았습니다.
   </div>
   <div id="mobileTag"></div>
-</div>
-
-<!-- 당구 파워바 (포크 전용 — 세팅 슬라이더 디자인 재사용) -->
-<div id="poolPower">
-  <div class="pool-power-box">
-    <div class="pool-power-desc" id="poolPowerDesc">당구봉 힘 세팅 : 약함. 덜 골라골라하게 날라갑니다.</div>
-    <div class="slider-track power">
-      <div class="fill" style="width:0%"></div>
-      <div class="handle" style="left:0%"></div>
-    </div>
-    <div class="pool-power-label" id="poolPowerLabel">0%</div>
-  </div>
-</div>
-
-<!-- 플랩골라 보너스 (포크 전용 — 진짜 설정 버튼/스위치 에셋 재사용, 파이프를 따라다님) -->
-<div id="flappyBonus">
-  <button class="btn" onclick="flappyBonusHit()">+1</button>
-  <div class="gg-switch" onclick="flappyBonusHit()"><div class="knob"></div></div>
 </div>
 
 <script>
@@ -377,29 +354,6 @@ const LIMITS = {
   trailLife: 0.5,        // 잔상 수명 (s)
   trailAlpha: 0.45,      // 잔상 알파 계수
   trailScale: 0.4,       // 잔상 스케일 증가율
-  sandyTrailAlpha: 0.5,  // 산데비스탄 잔상 알파 계수 (무지개, 기존보다 진하게)
-  sandyHueSpeed: 720,    // 산데비스탄 무지개 색상 순환 속도 (deg/s — 수명 0.5s × 720 = 전 스펙트럼)
-  poolMinSpeed: 40,      // 당구 최소 발사 속도 (약함도 강하게)
-  poolMaxSpeed: 165,     // 당구 최대 발사 속도 (3배 강화)
-  poolGolaMul: 2,        // 골라골라 모드 발사 속도 배율 (압도적으로)
-  poolFriction: 2,       // 당구 감속 (초당 배율 — 빠르게 정지해 다시 칠 수 있게)
-  poolStop: 0.05,        // 당구 정지 임계 속도
-  poolRestitution: 0.8,  // 당구 벽 반발 (원본 Fat bounciness와 동일 기조)
-  poolImpact: 0.13,      // 당구 임팩트 시점 (s) — 이때 발사
-  poolPull: 0.9,         // 당구 큐(팔) 당김 거리
-  poolCueW: 0.9,         // 당구 큐(팔) 스프라이트 크기
-  poolRest: 0.5,         // 당구 큐 조준 시 공과의 거리
-  poolTrailLife: 0.5,    // 당구공 트레일 수명 (s)
-  poolChargeT: 0.8,      // 당구 차지 샷 풀충전 시간 (s) — 꾹 누르면 0→100%
-  poolDrainT: 1.5,       // 당구 차지 게이지 발사 후 소진 시간 (s) — 0으로 천천히 복귀
-  flappyGravity: 7,      // 플랩골라 중력 (아래로, world/s²)
-  flappyFlap: 3.4,       // 플랩골라 파닥 (위로, world/s)
-  flappySpeed: 2.6,      // 플랩골라 파이프 이동 (world/s)
-  flappyPipeW: 1.4,      // 플랩골라 파이프 너비
-  flappyGap: 2.6,        // 플랩골라 파이프 틈 (world)
-  flappySpacing: 4.4,    // 플랩골라 파이프 간격 (world)
-  flappyMaxY: 4.2,       // 플랩골라 천장/바닥 경계
-  flappyX: -4,           // 플랩골라 몸 고정 x
   soundStep: 0.05,       // 슬라이더 사운드 단계
   pitchMin: 0.1,         // GolaSound 피치 하한 (원본 AudioInstance.SetPitch)
   pitchMax: 3,           // GolaSound 피치 상한
@@ -429,8 +383,6 @@ const MODES = [
     update: (dt) => { const t = Math.min(LIMITS.lerp * dt, 1); body.x += (pointer.x - body.x) * t; body.y += (pointer.y - body.y) * t; } },
   { name: '회전', desc: '몸통이 회전합니다.',
     update: (dt) => { body.rot -= LIMITS.rotFast * dt; body.x = pointer.x; body.y = pointer.y; } },
-  { name: '회전2', desc: '몸통이 빙글빙글 360도 돌아갑니다! 머리와 팔다리는 안 돌아갑니다.',
-    hideBody: true, rotate2: true, reset: () => { rotate2.spin = 0; }, update: (dt) => rotate2Update(dt) },
   { name: '반전', desc: '몸통 대신 팔, 다리를 조작합니다.',
     parts: 'mouse', update: () => {} },
   { name: '애피 슬라이드', desc: '그가 속도를 모으고 있습니다!',
@@ -478,336 +430,7 @@ const MODES = [
     } },
   { name: '잔상', desc: '몸통에 잔상이 생깁니다.',
     trails: true, update: () => { body.x = pointer.x; body.y = pointer.y; } },
-  { name: '싼데비슷한', desc: 'SO GET AWAY',
-    trails: 'sandy', update: () => { body.x = pointer.x; body.y = pointer.y; } },
-  { name: '당구', desc: '머리가 당구공이 되었습니다. 아무짝에도 쓸모없는 것은 여전합니다.',
-    hideBody: true, pool: true,
-    reset: () => { pool.x = pool.y = 0; pool.vx = pool.vy = 0; pool.spin = 0; pool.state = 'aim'; pool.hit = 0; pool.wallCd = 0; pool.trail = []; pool.oscT = 0; pool.charging = false; pool.chargeT = 0; pool.pullBack = 0.5; setPoolPower(0); },
-    update: (dt) => poolUpdate(dt) },
-  { name: '플랩골라', desc: '클릭으로 파닥! 파이프가 널 경멸합니다.',
-    hideBody: true, flappy: true, reset: flappyReset, update: (dt) => flappyUpdate(dt) },
 ];
-
-/* ================= 당구 모드 (포크 전용, 2026-08-16) ================= */
-let pool = { x: 0, y: 0, vx: 0, vy: 0, aim: 0, power: 0, state: 'aim', hit: 0, spin: 0, wallCd: 0, trail: [], oscT: 0, charging: false, chargeT: 0, pullBack: 0.5 };
-function poolUpdate(dt) {
-  const b = pool;
-  dt = Math.max(dt, 1 / 240);   // rAF dt=0(포커스 복귀 등)에도 스윙/물리가 진행되도록 보정
-  if (!isFinite(b.x) || !isFinite(b.y)) { b.x = b.y = 0; b.vx = b.vy = 0; b.state = 'aim'; }   // 이상 상태 방어
-  if (b.state === 'aim') {
-    b.aim = Math.atan2(pointer.y - b.y, pointer.x - b.x);
-    if (golaMode()) {   // 골라골라 모드: 파워가 요동침 (배경 무지개는 메인 루프가 담당)
-      b.oscT += dt * 7;
-      b.power = Math.max(0, Math.min(1, 0.5 + 0.5 * Math.sin(b.oscT) + 0.15 * Math.sin(b.oscT * 3)));
-      setPoolPower(b.power);
-    } else if (b.charging) {   // 차지 샷: 꾹 누르는 동안 0에서 100%까지 충전
-      if (panelOpen) { b.charging = false; }   // 패널 열리면 차지 취소
-      else {
-        b.chargeT += dt;
-        b.power = Math.min(1, b.chargeT / LIMITS.poolChargeT);
-        setPoolPower(b.power);
-      }
-    } else if (b.power > 0) {   // 발사 후 남은 게이지: 0으로 천천히 복귀
-      b.power = Math.max(0, b.power - dt / LIMITS.poolDrainT);
-      setPoolPower(b.power);
-    }
-  } else if (b.state === 'strike') {
-    b.hit += dt;
-    if (b.hit >= LIMITS.poolImpact) {
-      const sp = (LIMITS.poolMinSpeed + b.power * (LIMITS.poolMaxSpeed - LIMITS.poolMinSpeed)) * (golaMode() ? LIMITS.poolGolaMul : 1);
-      b.vx = Math.cos(b.aim) * sp; b.vy = Math.sin(b.aim) * sp;
-      b.state = 'roll';
-      uiClick();
-    }
-  } else if (b.state === 'roll') {
-    const f = Math.max(0, 1 - LIMITS.poolFriction * dt);
-    b.vx *= f; b.vy *= f;
-    b.x += b.vx * dt; b.y += b.vy * dt;
-    b.spin += Math.hypot(b.vx, b.vy) * dt / 0.5;
-    b.trail.push({ x: b.x, y: b.y, t: 0, spin: b.spin });   // 당구공 트레일 (항상, 회전 동기화)
-    b.trail.forEach(tr => tr.t += dt);
-    b.trail = b.trail.filter(tr => tr.t < LIMITS.poolTrailLife);
-    b.power = Math.max(0, b.power - dt / LIMITS.poolDrainT);   // 발사 후 게이지 0으로 천천히 복귀
-    setPoolPower(b.power);
-    const WX = W / 2 / scale - 1, WY = H / 2 / scale - 1;
-    if (b.wallCd > 0) b.wallCd -= dt;
-    if (b.x < -WX) { b.x = -WX; b.vx = Math.abs(b.vx) * LIMITS.poolRestitution; poolWallHit(); }
-    else if (b.x > WX) { b.x = WX; b.vx = -Math.abs(b.vx) * LIMITS.poolRestitution; poolWallHit(); }
-    if (b.y < -WY) { b.y = -WY; b.vy = Math.abs(b.vy) * LIMITS.poolRestitution; poolWallHit(); }
-    else if (b.y > WY) { b.y = WY; b.vy = -Math.abs(b.vy) * LIMITS.poolRestitution; poolWallHit(); }
-    if (Math.hypot(b.vx, b.vy) < LIMITS.poolStop) { b.vx = b.vy = 0; b.state = 'aim'; }
-  }
-}
-function poolCuePull() {   // 현재 당구 큐 당김 거리 (조준/차지/스윙 상태 반영)
-  const b = pool;
-  if (b.state === 'aim' && b.charging) return LIMITS.poolRest + LIMITS.poolPull * b.power;   // 차지: 세기가 클수록 뒤로
-  if (b.state === 'strike') {
-    const prog = Math.min(1, b.hit / LIMITS.poolImpact);
-    return b.pullBack * (1 - prog) + LIMITS.poolPull * Math.sin(prog * Math.PI);   // 당긴 위치에서 임팩트까지 스윙
-  }
-  return LIMITS.poolRest;
-}
-function poolStrike() {
-  if (pool.state !== 'aim') return;
-  pool.state = 'strike'; pool.hit = 0;
-  pool.pullBack = pool.charging ? LIMITS.poolRest + LIMITS.poolPull * pool.power : LIMITS.poolRest;   // 차지된 큐 당김 거리 저장 (스윙 시작점)
-  pool.charging = false;
-}
-function poolWallHit() {  // 벽 충돌 = 뚱뚱남 벨 소리 (쿨다운으로 중복 방지)
-  if (pool.wallCd > 0) return;
-  pool.wallCd = 0.08;
-  fatCollision();
-}
-// 파워바 안내 문구 (원작자 changelog 말투, 강도 4구간 — 강도 단어는 구간 색)
-function poolPowerDesc(p) {
-  const pre = '당구봉 힘 세팅 : ';
-  if (p < 0.25) return pre + '<span style="color:#00ff00">약함</span>. 덜 골라골라하게 날라갑니다.';
-  if (p < 0.5) return pre + '<span style="color:#ffff00">보통</span>. 그럭저럭 골라골라합니다.';
-  if (p < 0.75) return pre + '<span style="color:#ff8000">강함</span>. 제대로 골라골라합니다.';
-  return pre + '<span style="color:#ff0000">최강</span>. 골라골라의 수준이 아닙니다.';
-}
-function drawPool() {
-  const b = pool;
-  const bw = headLocal.w * scale, bh = (sprites.head.height / sprites.head.width) * bw;
-  // 큐 (애피 팔) — 조준 시 공에서 살짝 떨어지고, 차지하면 꾹 누른만큼 뒤로 당겨짐, 스윙하면 당긴 위치에서 임팩트
-  if (b.state !== 'roll') {
-    const pull = poolCuePull();
-    drawSprite(sprites.arm, b.x - Math.cos(b.aim) * pull, b.y - Math.sin(b.aim) * pull,
-      LIMITS.poolCueW, b.aim / RAD + 90, 0.5, 0);
-  }
-  // 당구공 트레일 (항상, 골라골라 모드에선 무지개 — 회전도 공과 동기화)
-  if (b.trail.length) {
-    b.trail.forEach(tr => {
-      const p = tr.t / LIMITS.poolTrailLife;
-      ctx.globalAlpha = (1 - p) * 0.6;
-      if (golaMode()) drawTrailColor(sprites.head, tr.x, tr.y, headLocal.w, -tr.spin / RAD, 0.5, 0.5, tr.t * 600);
-      else {
-        const [tx, ty] = w2s(tr.x, tr.y);
-        ctx.save();
-        ctx.translate(tx, ty);
-        ctx.rotate(tr.spin);
-        ctx.drawImage(sprites.head, -bw / 2, -bh / 2, bw, bh);
-        ctx.restore();
-      }
-    });
-    ctx.globalAlpha = 1;
-  }
-  // 당구공 (머리) — 굴러가며 회전
-  const [sx, sy] = w2s(b.x, b.y);
-  ctx.save();
-  ctx.translate(sx, sy);
-  ctx.rotate(b.spin);
-  ctx.drawImage(sprites.head, -bw / 2, -bh / 2, bw, bh);
-  ctx.restore();
-}
-// 파워바 (세팅 슬라이더 디자인 + 강도 4구간 색: 초록→노랑→주황→빨강)
-function powerColor(p) {
-  if (p < 0.25) return '#00ff00';
-  if (p < 0.5) return '#ffff00';
-  if (p < 0.75) return '#ff8000';
-  return '#ff0000';
-}
-function golaMode() { return golaOn; }   // 쓸모없는 스위치 30회 = 골라골라 특수 모드 (메인 루프가 유지 — 모드/패널/배경 조작과 무관)
-function rainbowFill() { return `hsl(${(performance.now() / 10) % 360},100%,50%)`; }
-function rainbowBg() {   // 골라골라 배경 무지개 — 메인 루프에서 매 프레임 호출 (원본 RainbowBackGround coroutine과 동일)
-  const hue = (performance.now() / 20) % 360;
-  const [r, g, b] = hsl(hue, 1, 0.5);
-  setBg(r, g, b);
-  const lb = document.getElementById('uselessLabel');   // 원본 RainbowTMP: 라벨 색 = 배경색
-  if (lb && golaOn) lb.style.color = `rgb(${Math.round(r*255)},${Math.round(g*255)},${Math.round(b*255)})`;
-}
-function setPoolPower(pct) {
-  pool.power = pct;
-  const fill = document.querySelector('#poolPower .fill');
-  const handle = document.querySelector('#poolPower .handle');
-  const label = document.getElementById('poolPowerLabel');
-  const desc = document.getElementById('poolPowerDesc');
-  if (fill) { fill.style.width = (pct * 100) + '%'; fill.style.background = golaMode() ? rainbowFill() : powerColor(pct); }
-  if (handle) handle.style.left = (pct * 100) + '%';
-  if (label) { label.textContent = golaMode() ? '골라골라' : Math.round(pct * 100) + '%'; label.style.color = golaMode() ? rainbowFill() : '#fff'; }
-  if (desc) desc.innerHTML = golaMode() ? '으악!!!!!!!!!!!!!!!!!!!!' : poolPowerDesc(pct);
-}
-function updatePoolBarPos() {   // 당구 파워바(네모)를 큐(팔) 옆에 붙이기
-  const el = document.getElementById('poolPower');
-  const b = pool;
-  const pull = poolCuePull();   // 실제 큐 위치 기준 (차지하면 뒤로 당겨진 곳에 붙음)
-  const [tx, ty] = w2s(b.x - Math.cos(b.aim) * pull, b.y - Math.sin(b.aim) * pull);
-  const sx = Math.cos(b.aim + Math.PI / 2), sy = Math.sin(b.aim + Math.PI / 2);   // 조준 방향 수직 = 팔 옆
-  el.style.left = Math.round(tx + sx * 150) + 'px';
-  el.style.top = Math.round(ty + sy * 150) + 'px';
-}
-
-/* ================= 플랩골라 모드 (포크 전용, 2026-08-16) ================= */
-const FLAPPY_DEATHS = [   // 독기 있는 사망 멘트 (원작자 정신세계 + 외국밈)
-  '죽음ㅇㅇ 점수 N점 — 파닥이 그렇게 어렵냐?',
-  '죽음ㅇㅇ 점수 N점 — 파이프가 널 경멸하는 중',
-  '죽음ㅇㅇ 점수 N점 — 친구나 가족이 지금 보고 있을지도',
-  '죽음ㅇㅇ 점수 N점 — 으악!!!!!!!!!!!!!!!!!',
-  '죽음ㅇㅇ 점수 N점 — 공간지각력이 제로네',
-  '죽음ㅇㅇ 점수 N점 — bro\'s aura -999',
-  '죽음ㅇㅇ 점수 N점 — sonion 😭',
-  '죽음ㅇㅇ 점수 N점 — fah!!!!!!!!!!!!!!!!!!!',
-  '죽음ㅇㅇ 점수 N점 — ggezp2w',
-  '죽음ㅇㅇ 점수 N점 — 이게 되네 ㅋㅋ',
-];
-const FLAPPY_TAUNTS = [   // 10점 단위 도발
-  '벌써 N점? 파이프가 질려하는 중',
-  'N점 돌파. 골라골라 실력이 늘었어',
-  'N점! 이제 좀 하잖아',
-  'N점! bro\'s aura +999',
-  'N점! sonion 😭도 이쯤 되면 경의',
-  'N점? 시뮬레이터 역사상 최고점 각이야',
-];
-let flappy = { y: 0, vy: 0, pipes: [], score: 0, dead: false };
-function flappyReset() { flappy.y = 0; flappy.vy = 0; flappy.pipes = []; flappy.score = 0; flappy.dead = false; }
-function flappyFlap() {
-  if (flappy.dead) { flappyReset(); uiClick(); return; }   // 죽은 뒤 클릭 = 재시작
-  flappy.vy = LIMITS.flappyFlap;
-  golaSound(1);   // 파닥할 때마다 골라골라 소리
-}
-function flappyBonusRect(p) {   // 보너스 버튼 화면 영역 (세로 버튼, 위 토관 안 중앙)
-  const x0 = w2s(p.x, 0)[0], wpx = LIMITS.flappyPipeW * scale;
-  const cx = x0 + wpx / 2;
-  const topY = w2s(p.x, p.gap + LIMITS.flappyGap / 2)[1];
-  const mid = Math.max(30, topY / 2);
-  return { x: cx - 11, y: mid - 23, w: 22, h: 46 };
-}
-function flappyClick() { flappyFlap(); }   // 클릭 = 파닥 (보너스는 #flappyBonus DOM 에셋이 처리)
-function flappyBonusHit() {   // 보너스 버튼/스위치 클릭 = +1점
-  if (flappy.dead) return;
-  const p = flappy.pipes.find(p => p.bonus && !p.bonusHit);
-  if (!p) return;
-  p.bonusHit = true;
-  flappy.score++;
-  toast('+1점 (보너스!)', '#ffff00');
-  golaSound(1);
-  document.getElementById('flappyBonus').style.display = 'none';
-}
-function updateFlappyBonus() {   // 보너스 에셋(설정 버튼+스위치)을 보너스 파이프에 따라붙임
-  const el = document.getElementById('flappyBonus');
-  const show = MODES[mode].flappy && !flappy.dead && !panelOpen;
-  const p = show ? flappy.pipes.find(p => p.bonus && !p.bonusHit) : null;
-  if (!p) { el.style.display = 'none'; return; }
-  const r = flappyBonusRect(p);
-  el.style.display = 'block';
-  el.style.left = Math.round(r.x + r.w / 2) + 'px';
-  el.style.top = Math.round(r.y + r.h / 2) + 'px';
-}
-function flappyUpdate(dt) {
-  const f = flappy;
-  if (panelOpen || f.dead) return;   // 패널 열림/사망 중엔 정지
-  f.vy -= LIMITS.flappyGravity * dt;
-  f.y += f.vy * dt;
-  const maxX = W / 2 / scale - 1;   // 화면 오른쪽 끝 (월드)
-  f.pipes.forEach(p => p.x -= LIMITS.flappySpeed * dt);
-  f.pipes = f.pipes.filter(p => p.x > -maxX - LIMITS.flappyPipeW);
-  const last = f.pipes.length ? f.pipes[f.pipes.length - 1].x : -Infinity;
-  if (last < maxX + 1 - LIMITS.flappySpacing) {   // 오른쪽 끝에서 새 파이프 스폰 (10% 확률로 보너스 버튼)
-    const gy = (Math.random() * 2 - 1) * (LIMITS.flappyMaxY - LIMITS.flappyGap / 2 - 0.5);
-    f.pipes.push({ x: maxX + 1, gap: gy, scored: false, bonus: Math.random() < 0.1, bonusHit: false });
-  }
-  f.pipes.forEach(p => {
-    if (!p.scored && p.x + LIMITS.flappyPipeW < LIMITS.flappyX) {
-      p.scored = true; f.score++; uiTock();
-      toast('+1점 (현재 ' + f.score + '점)');
-      if (f.score % 10 === 0) toast(FLAPPY_TAUNTS[(Math.random() * FLAPPY_TAUNTS.length) | 0].replace('N점', f.score + '점'), '#ffff00');   // 10점 단위 도발
-    }
-  });   // 통과 = 점수 (노란 토스트)
-  const hw = 0.45, hh = 0.55;   // 몸 대략 반폭/반높이
-  const die = () => { f.dead = true; fatCollision(); toast(FLAPPY_DEATHS[(Math.random() * FLAPPY_DEATHS.length) | 0].replace('N점', f.score + '점') + ' — 클릭하면 다시', '#ff5555'); };
-  if (f.y + hh >= LIMITS.flappyMaxY || f.y - hh <= -LIMITS.flappyMaxY) { die(); return; }   // 천장/바닥
-  for (const p of f.pipes) {   // 파이프 충돌
-    const top = p.gap + LIMITS.flappyGap / 2, bot = p.gap - LIMITS.flappyGap / 2;
-    const inX = LIMITS.flappyX + hw > p.x && LIMITS.flappyX - hw < p.x + LIMITS.flappyPipeW;
-    if (inX && (f.y + hh > top || f.y - hh < bot)) { die(); return; }
-  }
-}
-function drawFlappy(now) {
-  const f = flappy;
-  // 토관 = 진짜 설정 슬라이더 컨셉 (세로): 뚱뚱한 회색 네모 안에 상하 여백 있는 세로 슬라이더 — 트랙 #1e1e1e + 흰 필 + 회색 노브 #c8c8c8
-  const pad = 8;   // 여백 = 슬라이더 상하 여백이자 토관 좌우 두께
-  f.pipes.forEach(p => {
-    const x0 = w2s(p.x, 0)[0], wpx = LIMITS.flappyPipeW * scale;
-    const topY = w2s(p.x, p.gap + LIMITS.flappyGap / 2)[1];
-    const botY = w2s(p.x, p.gap - LIMITS.flappyGap / 2)[1];
-    const pw = wpx + pad * 2, cx = x0 + wpx / 2;   // 좌우 뚱뚱한 토관
-    // 위 토관 본체 (테두리 4px + 회색)
-    ctx.fillStyle = '#4f4f4f'; ctx.fillRect(x0 - pad, 0, pw, topY + 4);
-    ctx.fillStyle = '#787878'; ctx.fillRect(x0 - pad + 4, 4, pw - 8, topY - 4);
-    // 위 토관 세로 슬라이더 (상하 여백 pad — 끝에 안 붙음)
-    const tTop = pad, tHh = Math.max(8, topY - pad * 2), tFill = tHh * 0.6;
-    ctx.fillStyle = '#1e1e1e'; ctx.fillRect(cx - 7.5, tTop, 15, tHh);
-    ctx.fillStyle = '#fff'; ctx.fillRect(cx - 7.5, tTop, 15, tFill);
-    ctx.fillStyle = '#c8c8c8'; ctx.fillRect(cx - 10, tTop + tFill - 15, 20, 30);
-    // 아래 토관 본체
-    ctx.fillStyle = '#4f4f4f'; ctx.fillRect(x0 - pad, botY - 4, pw, H - botY + 4);
-    ctx.fillStyle = '#787878'; ctx.fillRect(x0 - pad + 4, botY, pw - 8, H - botY - 4);
-    // 아래 토관 세로 슬라이더 (상하 여백 pad)
-    const bTop = botY + pad, bHh = Math.max(8, H - botY - pad * 2), bFill = bHh * 0.6;
-    ctx.fillStyle = '#1e1e1e'; ctx.fillRect(cx - 7.5, bTop, 15, bHh);
-    ctx.fillStyle = '#fff'; ctx.fillRect(cx - 7.5, bTop + (bHh - bFill), 15, bFill);
-    ctx.fillStyle = '#c8c8c8'; ctx.fillRect(cx - 10, bTop + (bHh - bFill) - 15, 20, 30);
-  });   // 보너스 버튼/스위치는 #flappyBonus DOM 에셋이 파이프를 따라다님 (위에 그리지 않음)
-  // 몸 — 파이프를 통과하는 골라골라 (속도로 기울기 + 팔 파닥)
-  const tilt = Math.max(-30, Math.min(30, f.vy * 14));
-  const x = LIMITS.flappyX, y = f.y;
-  const cA = Math.cos(tilt * RAD), sA = Math.sin(tilt * RAD);
-  const bx = x + bodyLocal.x * cA - bodyLocal.y * sA;
-  const by = y + bodyLocal.x * sA + bodyLocal.y * cA;
-  const hx = x + headLocal.x * cA - headLocal.y * sA;
-  const hy = y + headLocal.x * sA + headLocal.y * cA;
-  const wing = f.dead ? 0 : Math.sin(now / 110) * 55;   // 파닥 각도
-  drawSprite(sprites.body, bx, by, bodyLocal.w, tilt, bodyLocal.px, bodyLocal.py);
-  drawSprite(sprites.head, hx, hy, headLocal.w, tilt, headLocal.px, headLocal.py);
-  drawSprite(sprites.arm, x - 0.6, y + 0.1, 0.5, tilt + wing, 0.5, 0.5);
-  drawSprite(sprites.arm, x + 0.6, y + 0.1, 0.5, tilt - wing, 0.5, 0.5);
-  // 점수 라벨 — 캐릭터 위, 이탤릭 D2Coding (흰 테두리 + 검정 글씨: 어떤 배경에서도 보이게)
-  const [lx, ly] = w2s(x, y + 2.0);
-  ctx.font = "italic bold 26px 'D2Coding', monospace";
-  ctx.textAlign = 'center';
-  ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.strokeText(f.score + '점', lx, ly);
-  ctx.fillStyle = '#000'; ctx.fillText(f.score + '점', lx, ly);
-  ctx.textAlign = 'left';
-}
-
-/* ================= 회전2 모드 (포크 전용, 2026-08-16 — 3D로 360도 회전) ================= */
-let rotate2 = { spin: 0 };
-function rotate2Update(dt) {
-  rotate2.spin -= LIMITS.rotFast * dt;   // 3D 360° 회전
-  body.x = pointer.x; body.y = pointer.y;   // 기본처럼 커서 따라가기
-}
-function drawRotate2() {   // 몸통만 3D로 도는 판 (앞면→옆면→뒷면), 머리·팔다리는 기본 그대로
-  const x = body.x, y = body.y;
-  const c = Math.cos(rotate2.spin * RAD);   // 3D 회전각
-  const hpx = (sprites.body.height / sprites.body.width) * bodyLocal.w * scale;   // 판 높이 고정
-  const wpx = Math.max(2, bodyLocal.w * Math.abs(c) * scale);   // 가로 = |cos| (옆으로 돌면 얇아짐)
-  const [sx, sy] = w2s(x, y + bodyLocal.y);
-  if (Math.abs(c) < 0.12) {   // 거의 옆면 → 판 두께 선 (3D로 도는 느낌)
-    ctx.fillStyle = '#4f4f4f';
-    ctx.fillRect(sx - 3, sy - hpx / 2, 6, hpx);
-  } else {   // 앞면/뒷면 → 판 면 (뒤면이면 좌우 반전)
-    ctx.save();
-    ctx.translate(sx, sy);
-    ctx.scale(c < 0 ? -1 : 1, 1);
-    ctx.drawImage(sprites.body, -bodyLocal.px * wpx, -(1 - bodyLocal.py) * hpx, wpx, hpx);
-    ctx.restore();
-  }
-  // 머리는 몸을 따라감 (기본: headLocal 오프셋), 팔다리는 기본 그대로 = 고정 위치 + 몸 바라보기
-  const [hx, hy] = w2s(x, y + headLocal.y);
-  const hw = headLocal.w * scale, hh = (sprites.head.height / sprites.head.width) * hw;
-  ctx.drawImage(sprites.head, hx - headLocal.px * hw, hy - (1 - headLocal.py) * hh, hw, hh);
-  parts.forEach(p => {   // updateParts가 유지하는 고정 위치 p.x/p.y + 몸 바라보는 p.rot (기본 모드와 동일)
-    const [px, py] = w2s(p.x, p.y);
-    const pw = p.w * scale, ph = (sprites[p.spr].height / sprites[p.spr].width) * pw;
-    ctx.save();
-    ctx.translate(px, py);
-    ctx.rotate(-p.rot * RAD);
-    ctx.drawImage(sprites[p.spr], -p.px * pw, -(1 - p.py) * ph, pw, ph);
-    ctx.restore();
-  });
-}
-
-
 let mode = 0;
 const pointer = { x: 0, y: 0 };
 const body = { x: 0, y: 0, vx: 0, vy: 0, rot: 0 };
@@ -963,12 +586,9 @@ function update(dt, now) {
   // P0-1: switch 제거 — MODES[mode].update(dt, now) 플러그인 호출
   MODES[mode].update(dt, now);
   updateParts(dt);
-  if (MODES[mode].trails) trails.push(MODES[mode].trails === 'sandy'
-    ? { x: b.x, y: b.y, rot: b.rot, t: 0, parts: parts.map(p => ({ spr: p.spr, x: p.x, y: p.y, rot: p.rot, w: p.w, px: p.px, py: p.py })) }  // 산데비스탄: 팔다리까지 스냅샷
-    : { x: b.x, y: b.y, rot: b.rot, t: 0 });  // AfterImage: 몸통+머리 잔상
+  if (MODES[mode].trails) trails.push({ x: b.x, y: b.y, rot: b.rot, t: 0 });  // AfterImage: 몸통+머리 잔상
   trails.forEach(t => t.t += dt);
   trails = trails.filter(t => t.t < LIMITS.trailLife);
-  if (golaMode()) rainbowBg();   // 골라골라 모드: 배경 무지개를 프레임마다 유지 (인터벌/모드 전환/패널과 무관)
 }
 
 /* ================= 렌더 ================= */
@@ -980,22 +600,6 @@ function drawSprite(spr, wx, wy, wUnits, angleDeg, px, py) {
   ctx.translate(sx, sy);
   ctx.rotate(-angleDeg * RAD);  // Unity z+ 반시계 → 캔버스 시계
   ctx.drawImage(spr, -px * w, -(1 - py) * h, w, h);
-  ctx.restore();
-}
-
-// 산데비스탄: 잔상 스프라이트를 알록달록한 실루엣으로 색칠 (원본 픽셀만 source-atop)
-function drawTrailColor(spr, wx, wy, wUnits, angleDeg, px, py, hue) {
-  const [sx, sy] = w2s(wx, wy);
-  const w = wUnits * scale;
-  const h = (spr.height / spr.width) * w;
-  ctx.save();
-  ctx.translate(sx, sy);
-  ctx.rotate(-angleDeg * RAD);
-  ctx.drawImage(spr, -px * w, -(1 - py) * h, w, h);
-  ctx.globalCompositeOperation = 'source-atop';  // 이미 그려진 픽셀만 색칠
-  ctx.fillStyle = `hsl(${(hue % 360 + 360) % 360},100%,50%)`;
-  ctx.fillRect(-px * w, -(1 - py) * h, w, h);
-  ctx.globalCompositeOperation = 'source-over';
   ctx.restore();
 }
 
@@ -1075,28 +679,20 @@ function draw() {
   const bg = `rgb(${Math.round(bgColor.r * 255)},${Math.round(bgColor.g * 255)},${Math.round(bgColor.b * 255)})`;
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
-  updateFlappyBonus();   // 보너스 에셋 위치 갱신 (플랩골라 아니면 숨김)
-  if (MODES[mode].flappy) { drawFlappy(performance.now()); return; }   // 플랩골라 전용 렌더
-  if (MODES[mode].rotate2) { drawRotate2(); return; }                  // 회전2 전용 렌더 (3D)
 
   // 잔상 (원본 AfterImage: 알파 감소 + 스케일 증가)
   trails.forEach(t => {
-    const sandy = MODES[mode].trails === 'sandy';
     const p = t.t / LIMITS.trailLife;
-    const alpha = (1 - p) * (sandy ? LIMITS.sandyTrailAlpha : LIMITS.trailAlpha);
+    const alpha = (1 - p) * LIMITS.trailAlpha;
     const sc = 1 + p * LIMITS.trailScale;
-    const hue = t.t * LIMITS.sandyHueSpeed;  // 산데비스탄: 트레일 나이 순 무지개 (rainbow order)
     const cA = Math.cos(t.rot * RAD), sA = Math.sin(t.rot * RAD);
     const bx = t.x + bodyLocal.x * cA - bodyLocal.y * sA;
     const by = t.y + bodyLocal.x * sA + bodyLocal.y * cA;
     const hx = t.x + headLocal.x * cA - headLocal.y * sA;
     const hy = t.y + headLocal.x * sA + headLocal.y * cA;
     ctx.globalAlpha = alpha;
-    if (sandy) drawTrailColor(sprites.body, bx, by, bodyLocal.w * sc, t.rot, bodyLocal.px, bodyLocal.py, hue);
-    else drawSprite(sprites.body, bx, by, bodyLocal.w * sc, t.rot, bodyLocal.px, bodyLocal.py);
-    if (sandy) drawTrailColor(sprites.head, hx, hy, headLocal.w * sc, t.rot, headLocal.px, headLocal.py, hue + 40);
-    else drawSprite(sprites.head, hx, hy, headLocal.w * sc, t.rot, headLocal.px, headLocal.py);
-    if (sandy && t.parts) t.parts.forEach(pr => drawTrailColor(sprites[pr.spr], pr.x, pr.y, pr.w * sc, pr.rot, pr.px, pr.py, hue + 80));
+    drawSprite(sprites.body, bx, by, bodyLocal.w * sc, t.rot, bodyLocal.px, bodyLocal.py);
+    drawSprite(sprites.head, hx, hy, headLocal.w * sc, t.rot, headLocal.px, headLocal.py);
     ctx.globalAlpha = 1;
   });
 
@@ -1111,8 +707,6 @@ function draw() {
     ctx.drawImage(sprites.fat, -w / 2, -h / 2, w, h);
     ctx.restore();
   }
-
-  if (MODES[mode].pool) { drawPool(); updatePoolBarPos(); }  // 당구: 머리(공) + 팔(큐) 렌더 + 파워바 큐 옆에 붙임
 
   if (!MODES[mode].hideBody) {  // P0-1: 애피슬라이드/뚱뚱남(hideBody)은 캐릭터 숨김
     // 팔다리
@@ -1212,7 +806,6 @@ function elasticTick() {
 function togglePanel() {
   panelOpen = !panelOpen;
   panel.classList.toggle('open', panelOpen);
-  document.body.classList.toggle('pool-panel', panelOpen);   // 패널 열리면 당구 파워바 숨김
   if (panelOpen) {
     if (!elasticRAF) elasticRAF = requestAnimationFrame(elasticTick);   // P1-8: 열 때만 rAF 시작
   } else {
@@ -1233,7 +826,6 @@ function setMode(i) {
   if (MODES[i].reset) MODES[i].reset();
   document.getElementById('modeBox').textContent = MODES[i].name;
   document.getElementById('modeDesc').textContent = MODES[i].desc;
-  document.body.classList.toggle('pool-on', !!MODES[i].pool);   // 당구 파워바 표시
   if (fat.active) toast(isMobile ? '뚱뚱남 : 터치해서 날려보내기' : '뚱뚱남 : 클릭해서 날려보내기', '#ffff00');  // 원본 FatAppie.OnEnable (모바일 문구 분기)
 }
 function nextMode() { setMode((mode + 1) % MODES.length); }
@@ -1262,7 +854,10 @@ function setBg(r, g, b) {
 }
 let lastHex = '#FFFFFF';  // 원본 InputFieldHexLimiter.lastText — 무효 입력 시 복원용
 function applyHex(silent) {
-  // HEX 입력은 배경색만 설정 — 골라골라(무지개) 중엔 메인 루프가 덮어쓴다 (원본 BackgroundSetting: 무지개가 우선, 끄지 않음)
+  // HEX 입력 시 무지개 중단 (원본 BackgroundSetting 동작)
+  if (rainbowId) { clearInterval(rainbowId); rainbowId = null; uselessCount = 0; }
+  const ul = document.getElementById('uselessLabel');
+  if (ul.textContent === 'GolaGola?') { ul.textContent = '인생에 전혀 필요 없는 스위치'; ul.style.color = '#fff'; }
   const hi = document.getElementById('hexInput');
   let v = hi.value.trim().replace(/^#/, '');
   // 원본 InputFieldHexLimiter.CheckValue: 무효면 이전 값 복원, 유효면 #+대문자로 확정
@@ -1280,7 +875,6 @@ const sliderPct = (e, track) => Math.max(0, Math.min(1, (e.clientX - track.getBo
 function handleSliderInput(e, track) {
   // P1-3: data-key/data-ch 직접 사용 (매 드래그 DOM 역산 제거)
   if (track.classList.contains('vol')) moveVol(e, track, track.dataset.key);
-  else if (track.classList.contains('power')) return;   // 당구 파워바 = 차지 게이지 (드래그 아님)
   else moveSlider(e, track, Number(track.dataset.ch));
 }
 
@@ -1333,7 +927,7 @@ function syncToggle(key, swId, labelId, onText, offText) {   // init 복원용 (
   lb.className = 'toggle-label ' + (save[key] ? 'green' : '');
 }
 function toggleToast() { setToggle('ToastMessageAllow', 'toastSwitch', 'toastLabel', '토스트 메시지 켜짐', '토스트 메시지 꺼짐', '토스트 메시지: 켜짐', '토스트 메시지: 꺼짐'); }
-let uselessCount = 0, golaOn = false;
+let uselessCount = 0, rainbowId = null;
 function toggleUseless() {
   uiSwitch();
   const el = document.getElementById('uselessSwitch');
@@ -1343,16 +937,20 @@ function toggleUseless() {
   if (uselessCount === 30) {
     label.textContent = 'GolaGola?';
     label.className = 'toggle-label';
-    golaOn = true;   // 골라골라 특수 모드 켜짐 (메인 루프가 무지개 배경 유지 — 모드/패널/배경 조작과 무관)
+    rainbowId = setInterval(() => {
+      const hue = (performance.now() / 20) % 360;
+      const [r, g, b] = hsl(hue, 1, 0.5);
+      setBg(r, g, b);   // P0-2: --bg-color 포함
+      label.style.color = `rgb(${Math.round(r*255)},${Math.round(g*255)},${Math.round(b*255)})`;  // 원본 RainbowTMP
+    }, 50);
     toast('GolaGola?', '#ffff00');
   } else if (uselessCount === 40) {
     label.textContent = '인생에 전혀 필요 없는 스위치';
     label.className = 'toggle-label';
     uselessCount = 0;
-    golaOn = false;   // 골라골라 특수 모드 꺼짐 (40회 토글이 유일한 OFF 경로 — 원본 UselessSwitch 동일)
+    clearInterval(rainbowId);
     setBg(1, 1, 1);   // P0-2: --bg-color 포함
     label.style.color = '#fff';
-    setPoolPower(pool.power);   // 당구 파워바의 '골라골라' 표시를 정상으로 되돌림
   }
   uiClick();
 }
@@ -1388,8 +986,7 @@ document.getElementById('hexInput').addEventListener('keydown', e => { if (e.key
 });
 /* ===== 버전 정보 페이지 (원본 VersionInfo) ===== */
 const VERSIONS = [
-  { ver: 'V1.5.2', dev: '어디서든 GolaGola해보세요.', log: '<span class="changelog-tag">[추가됨]</span><br>- 이제 모바일(터치) 기기에서도 조작할 수 있습니다.<br>&nbsp;&nbsp;- 화면을 드래그하여 GolaGola (터치한 위치 기준으로 몸통이 따라옵니다)<br>&nbsp;&nbsp;- 두 손가락으로 꾹 눌러 메뉴 토글<br>- 뚱뚱남 조작 시 문구가 모바일에서는 "터치해서 날려보내기"로 표시됩니다.<br>- 메뉴/버전 로그는 모바일에서 세로 스크롤이 가능합니다.<br><span class="changelog-tag">[수정됨]</span><br>- 뚱뚱남 물리 연산이 메뉴가 열려 있는 동안 정지됩니다 (원본 rb.simulated 동작과 동일).<br>- 크레딧을 길게 눌러 빠르게 넘기는 기능이 터치에서도 동작합니다.<br><span class="changelog-tag">[기타]</span><br>- 원본 DataManager.isMobile / PointerPos.MobileControl / MenuPanelToggle(두 손가락 0.6887s 홀드) / ToastUIManager.FirstToast / FatAppie 터치 발사 이식.' },
-  { ver: 'V1.5 (Chota Edition 포크)', dev: 'Yo tween! ready for earrape', log: '<span class="changelog-tag">[추가됨]</span><br>- 이제 버튼, 슬라이더, 스위치 UI에 재생되는 소리가 있습니다.<br>- 볼륨 설정이 메뉴에 추가됩니다.<br>&nbsp;&nbsp;- 모바일에서도 이용할 수 있습니다.<br>- 이제 토스트 메시지 허용 여부와 볼륨 설정은 자동으로 저장됩니다.<br>- 이제 토스트 메시지를 켜고 끌 때마다 토스트 메시지로 안내가 나옵니다.<br>- 이제 시작할 때마다 아무짝에도 쓸모없는 경고 문구들이 나옵니다.<br>&nbsp;&nbsp;- 놀랍게도 건너뛸 수 없습니다.<br>- 뚱뚱남 조작 방식이 추가되었습니다.<br>- 잔상 조작 방식이 추가되었습니다.<br>- 애피 슬라이드: 원본 FBX 모델 데이터를 사용합니다.<br><br><span class="changelog-tag">[기타]</span><br>- 원본: <a href="https://github.com/Appie-1019/GolaGolaSimulator">Appie-1019/GolaGolaSimulator</a><br>- 단일 HTML + chota.css 포크' },
+  { ver: 'V1.5', dev: 'Yo tween! ready for earrape', log: '<span class="changelog-tag">[추가됨]</span><br>- 이제 버튼, 슬라이더, 스위치 UI에 재생되는 소리가 있습니다.<br>- 볼륨 설정이 메뉴에 추가됩니다.<br>&nbsp;&nbsp;- 모바일은 이용할 수 없습니다. 대신 기기 측면의 볼륨 조절 버튼을 이용해야 합니다.<br>- 이제 토스트 메시지 허용 여부와 볼륨 설정은 자동으로 저장됩니다.<br>- 이제 토스트 메시지를 켜고 끌 때마다 토스트 메시지로 안내가 나옵니다.<br>- 이제 시작할 때마다 아무짝에도 쓸모없는 경고 문구들이 나옵니다.<br>&nbsp;&nbsp;- 놀랍게도 건너뛸 수 없습니다.<br>- 메뉴에 버전 정보를 열람할 수 있는 버튼이 생겼습니다.<br>- 메뉴에 크레딧을 볼 수 있는 버튼을 추가했습니다.<br>&nbsp;&nbsp;- 크레딧 화면에서 화면을 길게 눌러 빠르게 넘길 수 있습니다.<br>&nbsp;&nbsp;- 크레딧을 다 보면 강제로 그 끔찍한 경고 문구들을 다시 시청해야 합니다.<br>- 뚱뚱남 조작 방식은 이제 충돌할 때마다 소리가 있습니다.<br>- 잔상 조작 방식이 추가되었습니다.<br>- 이제 자동으로 VSync(수직 동기화)합니다.<br>&nbsp;&nbsp;- 웹 브라우저의 설정에 따라 동작하지 않을 수도 있습니다.<br><span class="changelog-tag">[수정됨]</span><br>- 메뉴 디자인이 변경되었습니다.<br>&nbsp;&nbsp;- 드롭다운 메뉴는 제거되었습니다.<br>- 애피 슬라이드의 3D 모델이 믿을 수 없을 정도로 약간 최적화되었습니다.<br>- 뚱뚱남 조작 방식에 설명이 없던 문제를 해결했습니다.' },
   { ver: 'V1.5.1', dev: '마우스를 팔이 빠질 때까지 돌려보세요.', log: '<span class="changelog-tag">[추가됨]</span><br>- 이제 GolaGola할 때마다 소리가 있습니다.<br>&nbsp;&nbsp;- 관련 설정도 추가되었습니다.<br><span class="changelog-tag">[수정됨]</span><br>- 크레딧 배속 기능을 이용하면 자주 문자 위치가 어긋나거나 겹치는 문제가 해결되었습니다.<br>- 이제 크레딧 배속 안내 메시지는 양심있는 투명도를 가집니다.<br>- 크레딧이 끝나면 이제 메인 화면으로 돌아갑니다.<br>- 시뮬레이터 안과 CHANGELOG.md의 버전 정보가 잘못 표기된 부분이 수정되었습니다.<br>- 배경 설정의 HEX 입력란이 모두 대문자로 바뀌지 않는 문제를 해결했습니다.<br>- 크레딧이 요소가 추가됨에 따라 변경되었습니다.<br>- 크레딧의 일부 글자에 색상을 추가했습니다.<br><span class="changelog-tag">[기타]</span><br>- 개발자가 진지하게 인트로에 있는 경고 메시지를 짧게 만들지 말지 고민하고 있습니다.<br>&nbsp;&nbsp;- 맨날 테스트할 때마다 10초동안 경고 화면을 보고 있자니, 인생의 질이 하락합니다.<br>&nbsp;&nbsp;- 고민만 했습니다. 아직 아무것도 바꾸지 않았습니다.' },
   { ver: 'V1.4.1', dev: '뚱뚱남! 뚱뚱남! 뚱뚱남! 뚱뚱남! 뚱뚱남! 뚱뚱남! 뚱뚱남! 뚱뚱남! 뚱뚱남!', log: '<span class="changelog-tag">[추가됨]</span><br>- 뚱뚱남 조작 방식이 추가되었습니다.<br><br>Anbit, 에셋 제공 감사합니다!' },
   { ver: 'V1.4', dev: '이제 다양한 방법으로 GolaGola해보세요.', log: '<span class="changelog-tag">[추가됨]</span><br>- 메뉴가 이제 드롭다운 메뉴로 구성됩니다.<br>- 조작 방식을 변경할 수 있는 기능 추가.<br><span class="changelog-tag">[수정됨]</span><br>- 팔과 다리가 몸통을 바라보는 각도가 미세하게 조정.' },
@@ -1499,7 +1096,7 @@ function setPointer(cx, cy) {
 /* ===== 입력 계층 (P1-2: 마우스/터치 리스너 단일화 — 원본 Slider/CreditPrinter/PointerPos/FatAppie/MenuPanelToggle) ===== */
 let touchOffset = { x: 0, y: 0 };
 let touchCount = 0, touchHoldTimer = 0;
-const touchInOverlay = t => !!(t.target.closest && t.target.closest('#panel, #modal, #credit, #intro, #poolPower'));  // MobileGameobjectSetter 레이트캐스트 비활성 대응 (+당구 파워바)
+const touchInOverlay = t => !!(t.target.closest && t.target.closest('#panel, #modal, #credit, #intro'));  // MobileGameobjectSetter 레이트캐스트 비활성 대응
 document.addEventListener('mousedown', e => {
   ensureAudio();  // 제스처(클릭) 시 AC 생성/재개
   // 슬라이더 (원본 Slider.cs)
@@ -1507,16 +1104,6 @@ document.addEventListener('mousedown', e => {
   if (track) { dragTrack = track; handleSliderInput(e, track); }
   // 크레딧 길게 누르기 (원본 CreditPrinter press)
   if (document.getElementById('credit').classList.contains('open')) creditPress = true;
-  // 플랩골라: 클릭 = 파닥 (죽었으면 재시작)
-  if (MODES[mode].flappy && !panelOpen) { flappyClick(e); return; }   // 클릭 = 파닥
-  // 당구 발사 (포크 전용 — 파워바 슬라이더 위가 아니면) — 차지 샷: 꾹 누르면 차지 시작, 떼면 발사
-  if (MODES[mode].pool) {
-    if (!panelOpen && !e.target.closest('#poolPower') && pool.state === 'aim') {
-      if (golaMode()) poolStrike();   // 골라골라 모드는 즉시 발사 (파워 요동 유지)
-      else { pool.charging = true; pool.chargeT = 0; pool.power = 0; setPoolPower(0); }   // 차지 시작 (0부터)
-    }
-    return;
-  }
   // 뚱뚱남 발사 (원본 FatAppie)
   if (panelOpen || !fat.active) return;
   const mx = (e.clientX - W / 2) / scale, my = (H / 2 - e.clientY) / scale;
@@ -1529,10 +1116,7 @@ document.addEventListener('mousemove', e => {
   if (dragTrack) handleSliderInput(e, dragTrack);   // 슬라이더 드래그
   setPointer(e.clientX, e.clientY);                 // 포인터 추적
 });
-document.addEventListener('mouseup', () => {
-  dragTrack = null; creditPress = false; creditFactor = 1;
-  if (MODES[mode].pool && pool.charging) poolStrike();   // 차지 샷: 떼는 순간 충전된 세기로 발사
-});
+document.addEventListener('mouseup', () => { dragTrack = null; creditPress = false; creditFactor = 1; });
 
 document.addEventListener('touchstart', e => {
   ensureAudio();  // iOS: 사용자 제스처에서 AC 생성/재개
@@ -1549,14 +1133,6 @@ document.addEventListener('touchstart', e => {
   }
   if (touchInOverlay(e)) return;  // 패널/모달/크레딧/인트로 위는 게임 조작 안 함
   e.preventDefault();  // 더블탭 줌·롱프레스·스크롤 방지
-  if (MODES[mode].flappy) { if (touchCount === 1) flappyClick(e.touches[0]); return; }   // 플랩골라: 탭 = 파닥
-  if (MODES[mode].pool) {  // 당구 발사 (포크 전용 — 차지 샷)
-    if (touchCount === 1 && !panelOpen && pool.state === 'aim') {
-      if (golaMode()) poolStrike();   // 골라골라 모드는 즉시 발사
-      else { pool.charging = true; pool.chargeT = 0; pool.power = 0; setPoolPower(0); }   // 차지 시작 (0부터)
-    }
-    return;
-  }
   if (!panelOpen && fat.active) {  // 뚱뚱남 발사 (원본 FatAppie.TryGetClickPosition)
     const c = e.touches[0];
     const mx = (c.clientX - W / 2) / scale, my = (H / 2 - c.clientY) / scale;
@@ -1575,11 +1151,8 @@ document.addEventListener('touchmove', e => {
   // 원본 MobileControl: target = touch + offset (월드좌표 → 스크린좌표 역변환)
   setPointer(c.clientX + touchOffset.x * scale, c.clientY - touchOffset.y * scale);
 });
-document.addEventListener('touchend', e => {
-  dragTrack = null; creditPress = false; creditFactor = 1; touchCount = e.touches.length;
-  if (MODES[mode].pool && pool.charging && e.touches.length === 0) poolStrike();   // 차지 샷: 손가락을 다 떼면 발사
-});
-document.addEventListener('touchcancel', () => { dragTrack = null; creditPress = false; creditFactor = 1; touchCount = 0; pool.charging = false; });
+document.addEventListener('touchend', e => { dragTrack = null; creditPress = false; creditFactor = 1; touchCount = e.touches.length; });
+document.addEventListener('touchcancel', () => { dragTrack = null; creditPress = false; creditFactor = 1; touchCount = 0; });
 
 /* ================= 인트로 (원본 대사) ================= */
 const INTRO = [

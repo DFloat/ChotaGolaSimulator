@@ -11,7 +11,8 @@ chota는 힌두어로 "작다"라는 뜻이고, 동시에 이 프로젝트가 �
 > 개발자 의견 : 원본이 76MB면, 이건 511KB입니다. 뭘 기대하셨나요? 아무짝에도 쓸모없는 건 그대로인데요. 한 150배 정도의 크기 차이는 있지만, 서로 비슷하게 빵탕하고 골라골라합니다.
 
 ## 링크
-* [ChotaGolaSimulator 플레이](https://dfloat.github.io/ChotaGolaSimulator/)
+* [ChotaGolaSimulator 플레이](https://dfloat.github.io/ChotaGolaSimulator/) — 트랙 1 (포크 본진)
+* [GolaGolaSimulator (Original-Like) 플레이](https://dfloat.github.io/ChotaGolaSimulator/original-like.html) — 트랙 2 (원본 싱크로율)
 * [원본 GolaGolaSimulator](https://github.com/Appie-1019/GolaGolaSimulator) 
 * [업데이트 기록](./CHANGELOG.md) — ~~없습니다. 만들기 귀찮았습니다.~~ 생기긴 했습니다만, 과연 제대로 될진 모르겠습니다.
 
@@ -19,7 +20,7 @@ chota는 힌두어로 "작다"라는 뜻이고, 동시에 이 프로젝트가 �
 원본 GolaGolaSimulator는 Unity로 만든 "하등 쓸모없는 무언가"였습니다. 이 포크는 그걸 **단일 HTML 파일 하나**로 옮긴 "하등 쓸모없는 무언가"입니다.
 그냥, 둘 다 하등 쓸모 없긴 한데 하나는 케이크고, 하나는 머핀이라고 생각하시면 됩니다.
 
-* 조작 방식 12종: 기본, 관성, 부드럽게, 회전, 반전, 애피 슬라이드, 발작, 동상, 추적, 나이스한 컴퓨터, 뚱뚱남, 잔상
+* 조작 방식 14종: 기본, 관성, 부드럽게, 회전, 반전, 애피 슬라이드, 발작, 동상, 추적, 나이스한 컴퓨터, 뚱뚱남, 잔상, 싼데비슷한, 당구
 * 애피 슬라이드는 원본 FBX 모델 데이터를 그대로 사용합니다. 심지어 텍스처까지요.
 * 소리도 원본 그대로입니다. GolaGola Voice, Tick, Tock, 그리고 그 유명한 뚱뚱남의 충돌 소리까지.
 * 폰트, 이미지, 소리, 3D 모델 전부 base64로 때려넣었습니다. 와이파이를 꺼도 됩니다. 꺼보세요.
@@ -32,8 +33,9 @@ chota는 힌두어로 "작다"라는 뜻이고, 동시에 이 프로젝트가 �
 ## 파일
 | 파일 | 설명 |
 |---|---|
-| `index.html` | 본편 (511KB) |
-| `golagolasimulator.html` | 버그 생겼을 때의 안전빵 |
+| `index.html` | 본편 — **트랙 1 (포크 본진)**. DFloat 독자 업데이트가 계속 추가됩니다. |
+| `original-like.html` | **트랙 2 (오리지널라이크)**. 원본 업데이트를 싱크로율대로 따라가는 버전. |
+| `bin/golagolasimulator.html` | 옛 안전빵. 사용 중단, 보관용. |
 
 > 개발자 의견 : 버그가 생기면 안전빵으로 돌아가시면 됩니다. 어차피 뭐가 달라도 아무짝에도 쓸모없는 건 똑같습니다. 
 
@@ -52,6 +54,12 @@ chota는 힌두어로 "작다"라는 뜻이고, 동시에 이 프로젝트가 �
 * [Canva](https://www.canva.com/) : 이 하등 쓸모없는 프로젝트의 배너를 만들 수 있게 해주셨습니다.
 * [Youtube](https://www.youtube.com/) : 애피라는 유튜버를 보게 해주셨습니다.
 * [Github](https://github.com/) : 이 리포지토리와 원본 리포지토리가 존재할 수 있게 해주셨습니다.
+
+
+## 라이선스
+* 이 프로젝트는 [GolaGolaSimulator](https://github.com/Appie-1019/GolaGolaSimulator) (MIT, Copyright 2026 Appie) 의 포크입니다. 전문은 `LICENSE` 를 참고하세요.
+* 내장 폰트 **D2Coding Bold v1.3.2** (© NAVER Corp.) 는 [SIL Open Font License 1.1](https://openfontlicense.org) 을 따릅니다.
+* 내장 CSS [chota.css v0.9.2](https://github.com/jenil/chota) 는 MIT License 입니다.
 
 
 
