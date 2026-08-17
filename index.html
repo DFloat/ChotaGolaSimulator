@@ -2235,7 +2235,7 @@ function setPointer(cx, cy) {
 /* ===== 입력 계층 (P1-2: 마우스/터치 리스너 단일화 — 원본 Slider/CreditPrinter/PointerPos/FatAppie/MenuPanelToggle) ===== */
 let touchOffset = { x: 0, y: 0 };
 let touchCount = 0, touchHoldTimer = 0;
-const touchInOverlay = t => !!(t.target.closest && t.target.closest('#panel, #modal, #credit, #intro, #poolPower'));  // MobileGameobjectSetter 레이트캐스트 비활성 대응 (+당구 파워바)
+const touchInOverlay = t => !!(t.target.closest && t.target.closest('#panel, #modal, #credit, #intro, #poolPower, #flappyBonus'));  // MobileGameobjectSetter 레이트캐스트 비활성 대응 (+당구 파워바, 플랩골라 보너스: 보너스만 발동)
 document.addEventListener('mousedown', e => {
   ensureAudio();  // 제스처(클릭) 시 AC 생성/재개
   // 슬라이더 (원본 Slider.cs)
@@ -2243,8 +2243,8 @@ document.addEventListener('mousedown', e => {
   if (track) { dragTrack = track; handleSliderInput(e, track); }
   // 크레딧 길게 누르기 (원본 CreditPrinter press)
   if (document.getElementById('credit').classList.contains('open')) creditPress = true;
-  // 플랩골라: 클릭 = 파닥 (죽었으면 재시작)
-  if (MODES[mode].flappy && !panelOpen) { flappyClick(e); return; }   // 클릭 = 파닥
+  // 플랩골라: 클릭 = 파닥 (죽었으면 재시작) — 보너스 버튼은 보너스만
+  if (MODES[mode].flappy && !panelOpen && !(e.target.closest && e.target.closest('#flappyBonus'))) { flappyClick(e); return; }   // 클릭 = 파닥
   // 당구 발사 (포크 전용 — 파워바 슬라이더 위가 아니면) — 차지 샷: 꾹 누르면 차지 시작, 떼면 발사
   if (MODES[mode].pool) {
     if (!panelOpen && !e.target.closest('#poolPower') && pool.state === 'aim') {
